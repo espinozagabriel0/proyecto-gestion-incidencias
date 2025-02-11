@@ -1,5 +1,5 @@
 
-export default function Ticket() {
+export default function ModifyTicketPage() {
   return (
     <div>
       

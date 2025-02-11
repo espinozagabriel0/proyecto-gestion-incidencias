@@ -1,19 +1,25 @@
 import './App.css'
 import { Route, Routes } from 'react-router-dom'
+import PanelPage from './pages/PanelPage'
+import Ticket from './pages/ModifyTicketPage'
+import ModifyTicketPage from './pages/ModifyTicketPage'
+import RegisterPage from './pages/RegisterPage'
+import LoginPage from './pages/LoginPage'
 
 function App() {
 
   return (
     <>
       <Routes>
-        <Route path="/" element={"login"} />
-        <Route path="/register" element={<h1>Registro</h1>} />
-        <Route path="/panel" element={<h1>Panel</h1>} />
+        <Route path="/" element={<LoginPage/>} />
+        <Route path="/register" element={<RegisterPage/>} />
+        <Route path="/panel" element={<PanelPage/>} />
 
 
-        <Route path="/panel" element={<h1>Comentaris</h1>} />
-        <Route path="/ticket" element={<h1>NouTicker/editar</h1>} />
-        <Route path="/adminUsers" element={<h1>adminUsuaris</h1>} />
+        <Route path="/panel" element={<PanelPage/>} />
+        <Route path="/ticket" element={<Ticket/>} />
+        <Route path="/adminUsers" element={<ModifyTicketPage/>} />
+        <Route path="*" element={<h1>Esta página no existe</h1>} />
       </Routes>
     </>
   )

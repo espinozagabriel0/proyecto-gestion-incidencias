@@ -1,9 +1,9 @@
-import Header from "../components/Header";
+import PanelComponent from "../components/PanelComponent";
 
 export default function PanelPage() {
   return (
     <div>
-      <Header/>
+      <PanelComponent/>
     </div>
   )
 }

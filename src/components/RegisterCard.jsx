@@ -1,18 +1,35 @@
+import { useState } from "react";
 import HeaderMenu from "./HeaderMenu";
 
 export default function RegisterCard() {
+  
+  // Al registrar, guardar usuario en datos usuarios en localstorage
+
+  const [userEmail, setUserEmail] = useState(null)
+  const [password, setPassword] = useState(null)
+
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    //  validar inputs e insertar en localstorage
+    console.log(userEmail, password)
+
+    
+  }
+
   return (
     <div>
       <HeaderMenu />
       <main className="container mt-5">
         <div className="pt-5">
           <h1 className="w-100 text-center">Registro</h1>
-          <form className="form p-4 border shadow bordered mt-5 mx-auto" style={{ width: "400px" }}>
+          <form className="form p-4 border shadow bordered mt-5 mx-auto" style={{ width: "400px" }} onSubmit={handleSubmit}>
             <label htmlFor="email" className="mt-2 form-label">User: </label>
-            <input type="text" className="form-control" placeholder="usuario@mail.com" />
+            <input type="email" onChange={(e) => setUserEmail(e.target.value)} className="form-control" placeholder="usuario@mail.com" required />
     
             <label htmlFor="pass" className="mt-2 form-label">Contraseña: </label>
-            <input type="password" className="form-control" />
+            <input type="password" className="form-control" onChange={(e) => setPassword(e.target.value)} required />
     
             <button type="submit" className="mt-4 w-100 btn btn-primary">Entrar</button>
           </form>

@@ -105,20 +105,6 @@ export default function PanelComponent() {
     }
     ]
       
-
-    const ticketsArray = [{
-        pendientes: tiquets_pendientes,
-        resueltos: tiquets_resueltos
-    }]
-
-    localStorage.setItem('dades_tiquets', JSON.stringify(ticketsArray))
-    localStorage.setItem('dades_usuaris', JSON.stringify(usuarios))
-
-
-    const tickets = JSON.parse(localStorage.getItem('dades_tiquets'))
-    console.log(tickets)
-
-
     const usuarios = [
         {
             rol: "user",
@@ -156,6 +142,19 @@ export default function PanelComponent() {
             password: "M0d2025&"
         }
     ];
+
+    const ticketsArray = [{
+        pendientes: tiquets_pendientes,
+        resueltos: tiquets_resueltos
+    }]
+
+    localStorage.setItem('dades_tiquets', JSON.stringify(ticketsArray))
+    localStorage.setItem('dades_usuaris', JSON.stringify(usuarios))
+
+
+    const tickets = JSON.parse(localStorage.getItem('dades_tiquets'))
+    console.log('tickets: ', tickets)
+    console.log('usuarios: ', usuarios)
     
 
     return (

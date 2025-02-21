@@ -9,9 +9,20 @@ import CommentsPage from './pages/CommentsPage'
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+// import { useContext, useEffect } from 'react'
+// import { GestionContext } from './context/GestionContext'
 
 function App() {
 
+  // const {tiquetsTotal, usuarios} = useContext(GestionContext)
+
+  // // guardar en localstorage tickets y usuarios
+  // useEffect(() => {
+  //   localStorage.setItem('dades_tiquets', JSON.stringify(tiquetsTotal))
+  //   localStorage.setItem('dades_usuaris', JSON.stringify(usuarios))
+
+  // }, [tiquetsTotal, usuarios])
+    
   return (
     <>
       <Routes>

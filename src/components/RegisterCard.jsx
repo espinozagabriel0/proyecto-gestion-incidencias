@@ -1,18 +1,69 @@
+import {useEffect, useState } from "react";
 import HeaderMenu from "./HeaderMenu";
 
 export default function RegisterCard() {
+
+  const [nom, setNom] = useState('')
+  const [userEmail, setUserEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [succes, setSuccess] = useState(false)
+
+  // Obtener datos actuales del localStorage
+  const [usuariosData, setUsuariosData] = useState(JSON.parse(localStorage.getItem('dades_usuaris')) || [])
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  
+    // Crear nuevo usuario
+    const nuevoUsuario = {
+      rol: "user",
+      nombre: nom,
+      id: usuariosData.length + 1,
+      email: userEmail,
+      password: password
+    };
+  
+    // Añadir nuevo usuario al array
+    setUsuariosData((prevData) => [...prevData, nuevoUsuario])
+    limpiarInputs()
+
+    // mensaje de exito y settimeout para borrar 
+    setSuccess(true)
+
+    setTimeout(() => {
+      setSuccess(false)
+    }, 3000);
+  };
+
+
+  // si cambia usuariosdata, actualizar localStorage
+  useEffect(() => {
+    localStorage.setItem('dades_usuaris', JSON.stringify(usuariosData));
+  }, [usuariosData])
+
+  const limpiarInputs = () => {
+    setNom('')
+    setUserEmail('')
+    setPassword('')
+  }
+
+
   return (
     <div>
       <HeaderMenu />
       <main className="container mt-5">
         <div className="pt-5">
           <h1 className="w-100 text-center">Registro</h1>
-          <form className="form p-4 border shadow bordered mt-5 mx-auto" style={{ width: "400px" }}>
-            <label htmlFor="email" className="mt-2 form-label">User: </label>
-            <input type="text" className="form-control" placeholder="usuario@mail.com" />
+          <form className="form p-4 border shadow bordered mt-5 mx-auto" style={{ width: "400px" }} onSubmit={handleSubmit}>
+            {succes && <p className="text-center text-success">Usuario registrado!</p>}
+            <label htmlFor="text" className="mt-2 form-label">Username: </label>
+            <input type="text" onChange={(e) => setNom(e.target.value)} className="form-control" required  value={nom}/>
+
+            <label htmlFor="email" className="mt-2 form-label">Usermail: </label>
+            <input type="email" onChange={(e) => setUserEmail(e.target.value)} className="form-control" placeholder="usuario@mail.com" required value={userEmail} />
     
             <label htmlFor="pass" className="mt-2 form-label">Contraseña: </label>
-            <input type="password" className="form-control" />
+            <input type="password" className="form-control" onChange={(e) => setPassword(e.target.value)} required value={password}/>
     
             <button type="submit" className="mt-4 w-100 btn btn-primary">Entrar</button>
           </form>

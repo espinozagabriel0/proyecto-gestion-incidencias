@@ -1,16 +1,16 @@
-import {useEffect, useState } from "react";
+import {useContext, useState } from "react";
 import HeaderMenu from "./HeaderMenu";
+import { GestionContext } from "../context/GestionContext";
 
 export default function RegisterCard() {
 
+  const {usuarios, setUsuarios} = useContext(GestionContext)
   const [nom, setNom] = useState('')
   const [userEmail, setUserEmail] = useState('')
   const [password, setPassword] = useState('')
   const [succes, setSuccess] = useState(false)
 
-  // Obtener datos actuales del localStorage
-  const [usuariosData, setUsuariosData] = useState(JSON.parse(localStorage.getItem('dades_usuaris')) || [])
-
+// Funcion handler submit registro
   const handleSubmit = (e) => {
     e.preventDefault();
   
@@ -18,13 +18,13 @@ export default function RegisterCard() {
     const nuevoUsuario = {
       rol: "user",
       nombre: nom,
-      id: usuariosData.length + 1,
+      id: usuarios.length + 1,
       email: userEmail,
       password: password
     };
   
     // Añadir nuevo usuario al array
-    setUsuariosData((prevData) => [...prevData, nuevoUsuario])
+    setUsuarios((prevData) => [...prevData, nuevoUsuario])
     limpiarInputs()
 
     // mensaje de exito y settimeout para borrar 
@@ -34,12 +34,6 @@ export default function RegisterCard() {
       setSuccess(false)
     }, 3000);
   };
-
-
-  // si cambia usuariosdata, actualizar localStorage
-  useEffect(() => {
-    localStorage.setItem('dades_usuaris', JSON.stringify(usuariosData));
-  }, [usuariosData])
 
   const limpiarInputs = () => {
     setNom('')

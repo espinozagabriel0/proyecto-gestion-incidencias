@@ -20,7 +20,6 @@ function App() {
   // useEffect(() => {
   //   localStorage.setItem('dades_tiquets', JSON.stringify(tiquetsTotal))
   //   localStorage.setItem('dades_usuaris', JSON.stringify(usuarios))
-
   // }, [tiquetsTotal, usuarios])
     
   return (

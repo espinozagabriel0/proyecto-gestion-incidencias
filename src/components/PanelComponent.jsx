@@ -1,17 +1,17 @@
+import { useContext } from "react";
 import HeaderMenu from "./HeaderMenu";
 import TicketsPendents from "./tables/TicketsPendents";
 import TicketsResolts from "./tables/TicketsResolts";
+import { GestionContext } from "../context/GestionContext";
 
 export default function PanelComponent() {
 
-    // obtener array dadesTiquets
-    const tickets = JSON.parse(localStorage.getItem('dades_tiquets'))
-    console.log('tickets: ', tickets)
-
+    // obtener array dadesTiquets y filtrar por propiedad resuelto
+    const {tiquetsTotal} = useContext(GestionContext)
     
-    const ticketsPendientes = tickets.filter((ticket) => !ticket.resuelto)
+    const ticketsPendientes = tiquetsTotal.filter((ticket) => !ticket.resuelto)
 
-    const ticketsResueltos = tickets.filter((ticket) => ticket.resuelto)
+    const ticketsResueltos = tiquetsTotal.filter((ticket) => ticket.resuelto)
 
     return (
         <>

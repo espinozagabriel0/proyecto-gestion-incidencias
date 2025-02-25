@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 export default function HeaderMenu() {
+
+  const [currentUsermail, setCurrentUsermail] = useState(JSON.parse(localStorage.getItem('usuari_actual')).email || 'admin@ejemplo.com')
+
   return (
       <header>
         <nav className="navbar navbar-light bg-light">
@@ -12,7 +16,7 @@ export default function HeaderMenu() {
               <Link to={"/register"} className="btn btn-secondary ms-2">REGISTRO</Link>
             </div>
             <div>
-              <span>administrador@fpllefia.com</span>
+              <span>{currentUsermail}</span>
             </div>
           </div>
         </nav>

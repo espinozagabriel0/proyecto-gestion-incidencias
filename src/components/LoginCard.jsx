@@ -1,6 +1,38 @@
+import { useNavigate } from "react-router-dom";
+import { GestionContext } from "../context/GestionContext";
 import HeaderMenu from "./HeaderMenu";
+import {useContext, useState} from 'react'
 
 export default function LoginCard() {
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const {usuarios} = useContext(GestionContext)
+
+  const navigate = useNavigate()
+
+  // simular inicio de sesion usando dades_usuaris localStorage
+    const handleLogin = (e) => {
+      e.preventDefault()
+
+      const userExists = usuarios.find((user) => user.email == email && user.password == password)
+      if (userExists) {
+        // si existe, guardar en localStorage usuario actual y redirigir a panel
+        localStorage.setItem('usuari_actual', JSON.stringify(userExists)) 
+        
+        navigate('/panel')
+      }
+
+      limpiarInputs()
+    }
+
+    
+  const limpiarInputs = () => {
+    setEmail('')
+    setPassword('')
+  }
+
+
     return (
       <>
       <HeaderMenu/>
@@ -9,6 +41,7 @@ export default function LoginCard() {
             <h1 className="w-100 text-center">Login</h1>
             <form
               action=""
+              onSubmit={handleLogin}
               className="form p-4 border shadow bordered mt-5 mx-auto"
               style={{ width: "400px" }}
             >
@@ -16,16 +49,18 @@ export default function LoginCard() {
                 User:
               </label>
               <input
-                type="text"
+                type="email"
                 id="email"
+                onChange={(e) => setEmail(e.target.value)}
                 className="form-control"
                 placeholder="usuario@mail.com"
+                value={email}
               />
   
               <label htmlFor="pass" className="mt-2 form-label">
                 Contraseña:
               </label>
-              <input type="password" id="pass" className="form-control" />
+              <input type="password" id="pass" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)}/>
   
               <button type="submit" className="mt-4 w-100 btn btn-primary">
                 Entrar

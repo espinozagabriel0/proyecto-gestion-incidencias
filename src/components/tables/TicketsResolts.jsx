@@ -1,5 +1,14 @@
+import { useContext } from "react"
+import { GestionContext } from "../../context/GestionContext"
 
 export default function TicketsResolts({tickets}) {
+  const {setTiquetsTotal} = useContext(GestionContext)
+  
+  const handleRemove = (id) => {
+    // sobreescribe el array en localStorage sin el ticket seleccionado
+    setTiquetsTotal(prevTickets => prevTickets.filter((ticket) => ticket.id !== id))
+  }
+
   return (
     <table className="table mt-4">
         <thead>
@@ -32,7 +41,7 @@ export default function TicketsResolts({tickets}) {
                     </button>
                     </td>
                     <td>
-                    <button className="btn btn-danger" title="Eliminar ticket">
+                    <button onClick={() => handleRemove(ticket.id)} className="btn btn-danger" title="Eliminar ticket">
                         <i className="bi bi-trash3"></i>
                     </button>
                 </td>

@@ -1,4 +1,22 @@
+import { useContext } from "react";
+import { GestionContext } from "../../context/GestionContext";
+
 export default function TicketsPendents({tickets}) {
+
+  const {setTiquetsTotal} = useContext(GestionContext)
+
+  // crea un nuevo array con tickets y si el id coincide, actualiza la propiedad resuelto, sino, se devuelve el ticket sin actualizar
+  const handleResolve = (id) => {
+    setTiquetsTotal(prevTickets => prevTickets.map((ticket) => ticket.id == id ? 
+      {...ticket, resuelto: true} : ticket
+    ))
+  }
+
+  const handleRemove = (id) => {
+    // sobreescribe el array en localStorage sin el ticket seleccionado
+    setTiquetsTotal(prevTickets => prevTickets.filter((ticket) => ticket.id !== id))
+  }
+
   return (
     <table className="table mt-4">
       <thead>
@@ -24,7 +42,7 @@ export default function TicketsPendents({tickets}) {
             <td>{ticket.descripcion}</td>
             <td>{ticket.alumno}</td>
             <td>
-              <button className="btn btn-success me-1" title="Resolver ticket">
+              <button onClick={() => handleResolve(ticket.id)} className="btn btn-success me-1" title="Resolver ticket">
                 Resolver
               </button>
               <button 
@@ -38,7 +56,7 @@ export default function TicketsPendents({tickets}) {
               <button className="btn btn-info me-1" title="Ver comentarios">
                 <i className="bi bi-chat-left-text"></i>
               </button>
-              <button className="btn btn-danger" title="Eliminar ticket">
+              <button onClick={() => handleRemove(ticket.id)} className="btn btn-danger" title="Eliminar ticket">
                 <i className="bi bi-trash3"></i>
               </button>
             </td>

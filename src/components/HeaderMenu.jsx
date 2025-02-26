@@ -1,6 +1,19 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function HeaderMenu() {
+  // cargar email usuario actual si existe
+  const [currentUsermail] = useState(localStorage.getItem('usuari_actual') ? JSON.parse(localStorage.getItem('usuari_actual')).email : 'Inicia sesión')
+  
+  const navigate = useNavigate()
+
+
+  // funcion para desloggear
+  const handleLogout = () => {
+    localStorage.removeItem('usuari_actual')
+    navigate('/')
+  }
+
   return (
       <header>
         <nav className="navbar navbar-light bg-light">
@@ -12,7 +25,10 @@ export default function HeaderMenu() {
               <Link to={"/register"} className="btn btn-secondary ms-2">REGISTRO</Link>
             </div>
             <div>
-              <span>administrador@fpllefia.com</span>
+              <span>{currentUsermail}</span>
+              <button onClick={() => handleLogout()} className="btn btn-danger ms-2">
+                <i className="bi bi-box-arrow-right"></i>
+              </button>
             </div>
           </div>
         </nav>

@@ -1,8 +1,49 @@
 import { Link } from "react-router-dom";
 import HeaderMenu from "./HeaderMenu";
 import Comment from "./Comment";
+import { useContext, useEffect, useState } from "react";
+import { GestionContext } from "../context/GestionContext";
 
-export default function Comments() {
+export default function Comments({ id }) {
+  const {tiquetsTotal, setTiquetsTotal} = useContext(GestionContext);
+
+  // Al cargar componente, cargar comentarios de este ticket
+  const [comentarios, setComentarios] = JSON.parse(localStorage.getItem("comments")) || []
+
+  const usuarioActual = (JSON.parse(localStorage.getItem('usuari_actual'))).nombre 
+
+  const [commentBody, setCommentBody] = useState("");
+  const [commentDate, setCommentDate] = useState(new Date());
+
+
+  useEffect(() => {
+    console.log(comentarios);
+  }, []);
+
+  const handleAddComment = (e) => {
+    // Comprobar que estan todos los campos y de forma correcta, y guardar este comentario al array 'comments' del ticket seleccionado en localstorage
+    e.preventDefault();
+    // console.log(commentBody, commentDate)
+
+    if (usuarioActual.length > 0) {
+        if (commentBody.length > 0 && commentDate) {
+            const modifiedComments = [...comentarios, {
+                // 
+                id: comentarios.length++,
+                Author: usuarioActual,
+                Date: commentDate,
+                CommentBody: commentBody
+            }]
+            setComentarios(modifiedComments)
+            setTiquetsTotal((prevTickets) => prevTickets.map((ticket) => ticket.id == id ? {
+                ...ticket, comments: modifiedComments} : ticket
+        ))
+        }
+    }else{
+        console.error('Inicia sesión para poder añadir comentarios.')
+    }
+  };
+
   return (
     <>
       <HeaderMenu />
@@ -15,29 +56,47 @@ export default function Comments() {
         </div>
 
         <h2 className="my-4">
-          Código ticket: <span>123456</span>
+          Código ticket: <span>{id}</span>
         </h2>
         <div className="">
-          <form action="" className="form card p-3 shadow">
+          <form
+            action=""
+            className="form card p-3 shadow"
+            onSubmit={handleAddComment}
+          >
             <label htmlFor="comentario" className="form-label">
               Comentario:{" "}
             </label>
-            <textarea className="form-control" cols="3"></textarea>
+            <textarea
+              className="form-control"
+              cols="3"
+              onChange={(e) => setCommentBody(e.target.value)}
+            ></textarea>
             <label htmlFor="fecha" className="form-label me-2 mt-3">
               Fecha:{" "}
             </label>
             <div className="d-flex align-items-center">
-              <input type="datetime-local" className="form-control w-25" />
+              <input
+                type="datetime-local"
+                className="form-control w-25"
+                onChange={(e) => setCommentDate(e.target.value)}
+              />
               <button className="btn btn-success ms-auto">
                 Añadir comentario
               </button>
             </div>
           </form>
 
-          {/* Comentarios */}
+          {/* Comentarios, que se cargaran del array comentario en localstorage que tenga el id del ticket seleccionado*/}
           <div className="mt-4">
-            <Comment />
-            <Comment />
+            {/* {comentarios.map((comentario) => 
+                <Comment 
+                    key={comentario.id}
+                    author={comentario.Author}
+                    date={comentario.Date}
+                    body={comentario.CommentBody}
+                />
+            )} */}
           </div>
         </div>
 

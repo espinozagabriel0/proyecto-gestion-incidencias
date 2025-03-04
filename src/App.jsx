@@ -31,7 +31,7 @@ function App() {
 
 
         <Route path="/ticket" element={<Ticket/>} />
-        <Route path="/comments" element={<CommentsPage/>} />
+        <Route path="/comments/:id" element={<CommentsPage/>} />
         <Route path="/adminUsers" element={<ModifyTicketPage/>} />
         <Route path="*" element={<h1>Esta página no existe</h1>} />
       </Routes>

@@ -1,10 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import HeaderMenu from "./HeaderMenu";
 import Comment from "./Comment";
 import { useContext, useEffect, useState } from "react";
 import { GestionContext } from "../context/GestionContext";
 
 export default function Comments({ id }) {
+  
   const { tiquetsTotal, setTiquetsTotal } = useContext(GestionContext);
 
   // Al cargar componente, cargar comentarios de este ticket
@@ -12,7 +13,9 @@ export default function Comments({ id }) {
 
   const usuarioActual = JSON.parse(
     localStorage.getItem("usuari_actual")
-  ).nombre;
+  )?.nombre;
+
+  
 
   const [commentBody, setCommentBody] = useState("");
   // const [commentDate, setCommentDate] = useState(new Date());
@@ -61,6 +64,10 @@ export default function Comments({ id }) {
     }
   };
 
+  if (!usuarioActual) {
+    return <Navigate to={"/"}/>
+  }
+
   return (
     <>
       <HeaderMenu />
@@ -100,7 +107,7 @@ export default function Comments({ id }) {
                 className="form-control w-25"
                 onChange={(e) => setCommentDate(e.target.value)}
               /> */}
-              <button className="btn btn-success ms-auto">
+              <button className="btn btn-success ms-auto mt-3">
                 Añadir comentario
               </button>
             </div>
@@ -118,7 +125,7 @@ export default function Comments({ id }) {
                 />
               ))
             ) : (
-              <p>Todavía no hay comentarios.</p>
+              <p className="text-center">Todavía no hay comentarios para este ticket.</p>
             )}
           </div>
         </div>

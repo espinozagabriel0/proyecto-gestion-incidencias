@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { GestionContext } from "../../context/GestionContext";
+import { Link } from "react-router-dom";
 
 export default function TicketsPendents({tickets}) {
 
@@ -54,7 +55,9 @@ export default function TicketsPendents({tickets}) {
                 <i className="bi bi-pencil"></i>
               </button>
               <button className="btn btn-info me-1" title="Ver comentarios">
-                <i className="bi bi-chat-left-text"></i>
+                <Link to={`/comments/${ticket.id}`}>
+                  <i className="bi bi-chat-left-text"></i>
+                </Link>
               </button>
               <button onClick={() => handleRemove(ticket.id)} className="btn btn-danger" title="Eliminar ticket">
                 <i className="bi bi-trash3"></i>

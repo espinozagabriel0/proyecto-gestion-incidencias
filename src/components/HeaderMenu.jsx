@@ -10,7 +10,8 @@ export default function HeaderMenu() {
 
   // funcion para desloggear
   const handleLogout = () => {
-    localStorage.removeItem('usuari_actual')
+    localStorage.clear()
+    // localStorage.removeItem('usuari_actual')
     navigate('/')
   }
 

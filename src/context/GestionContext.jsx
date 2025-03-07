@@ -14,6 +14,7 @@ const GestionProvider = ({children}) => {
           ordenador: 'PC5',
           descripcion: 'No arranca el sistema operativo',
           alumno: 'Laura García',
+          comments: [],
           resuelto: false
         },
         {
@@ -24,6 +25,7 @@ const GestionProvider = ({children}) => {
           ordenador: 'PC12',
           descripcion: 'Problemas con la conexión a internet',
           alumno: 'Carlos Rodríguez',
+          comments: [],
           resuelto: false
         },
         {
@@ -34,6 +36,7 @@ const GestionProvider = ({children}) => {
           ordenador: 'PC8',
           descripcion: 'Error en la instalación de software',
           alumno: 'María López',
+          comments: [],
           resuelto: false
         },
         {
@@ -44,6 +47,7 @@ const GestionProvider = ({children}) => {
           ordenador: 'PC3',
           descripcion: 'Pantalla azul recurrente',
           alumno: 'Javier Martínez',
+          comments: [],
           resuelto: false
         },
         {
@@ -54,6 +58,7 @@ const GestionProvider = ({children}) => {
           ordenador: 'PC15',
           descripcion: 'Teclado no responde',
           alumno: 'Ana Sánchez',
+          comments: [],
           resuelto: false
         },
         {
@@ -65,6 +70,7 @@ const GestionProvider = ({children}) => {
           ordenador: 'PC7',
           descripcion: 'Problema con el software de diseño',
           alumno: 'Pedro Gómez',
+          comments: [],
           resuelto: true
         },
         {
@@ -76,6 +82,7 @@ const GestionProvider = ({children}) => {
           ordenador: 'PC10',
           descripcion: 'Fallo en la configuración de red',
           alumno: 'Elena Fernández',
+          comments: [],
           resuelto: true
         },
         {
@@ -87,6 +94,7 @@ const GestionProvider = ({children}) => {
           ordenador: 'PC2',
           descripcion: 'Problema con el arranque dual',
           alumno: 'Miguel Álvarez',
+          comments: [],
           resuelto: true
         },
         {
@@ -98,6 +106,7 @@ const GestionProvider = ({children}) => {
           ordenador: 'PC9',
           descripcion: 'Error en la compilación de código',
           alumno: 'Sara Ruiz',
+          comments: [],
           resuelto: true
         },
         {
@@ -109,6 +118,7 @@ const GestionProvider = ({children}) => {
           ordenador: 'PC11',
           descripcion: 'Problema con el entorno de desarrollo',
           alumno: 'David Torres',
+          comments: [],
           resuelto: true
         }
       ];

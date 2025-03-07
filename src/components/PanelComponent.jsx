@@ -3,7 +3,7 @@ import HeaderMenu from "./HeaderMenu";
 import TicketsPendents from "./tables/TicketsPendents";
 import TicketsResolts from "./tables/TicketsResolts";
 import { GestionContext } from "../context/GestionContext";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 export default function PanelComponent() {
   // obtener array dadesTiquets y filtrar por propiedad resuelto
@@ -17,14 +17,19 @@ export default function PanelComponent() {
   const ticketsResueltos = tiquetsTotal.filter((ticket) => ticket.resuelto);
 
   if (!usuarioActual) {
-    return <Navigate to={"/"}/>
+    return <Navigate to={"/"} />;
   }
 
   return (
     <>
       <HeaderMenu />
       <main className="container mt-5">
-        <h1>Administración de incidencias</h1>
+        <div className="d-flex align-items-center justify-content-between">
+          <h1>Administración de incidencias</h1>
+          <Link to={"/ticket"} className="" style={{border: "none", fontSize: "30px"}}>
+            <i className="fa-solid fa-square-plus fa-xl"></i>
+          </Link>
+        </div>
         <h2 className="mt-5">Tickets pendientes</h2>
         <TicketsPendents tickets={ticketsPendientes} />
 

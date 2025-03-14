@@ -33,6 +33,7 @@ export default function TicketsResolts({ tickets }) {
           <tr key={ticket.id}>
             <td>{ticket.id}</td>
             <td>{ticket.fecha}</td>
+            <td>{ticket.fecha_resuelto}</td>
             <td>{ticket.aula}</td>
             <td>{ticket.grupo}</td>
             <td>{ticket.ordenador}</td>

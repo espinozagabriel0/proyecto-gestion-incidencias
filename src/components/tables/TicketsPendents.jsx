@@ -8,8 +8,11 @@ export default function TicketsPendents({tickets}) {
 
   // crea un nuevo array con tickets y si el id coincide, actualiza la propiedad resuelto, sino, se devuelve el ticket sin actualizar
   const handleResolve = (id) => {
+    const date = new Date()
+    const formattedDate = date.toLocaleDateString()
+    
     setTiquetsTotal(prevTickets => prevTickets.map((ticket) => ticket.id == id ? 
-      {...ticket, resuelto: true} : ticket
+      {...ticket, resuelto: true, fecha_resuelto: formattedDate} : ticket
     ))
   }
 

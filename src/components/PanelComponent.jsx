@@ -3,7 +3,7 @@ import HeaderMenu from "./HeaderMenu";
 import TicketsPendents from "./tables/TicketsPendents";
 import TicketsResolts from "./tables/TicketsResolts";
 import { GestionContext } from "../context/GestionContext";
-import { Link, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import NouTicket from "../pages/NouTicket";
 
 export default function PanelComponent() {
@@ -28,7 +28,6 @@ export default function PanelComponent() {
         <div className="d-flex align-items-center justify-content-between">
           <h1>Administración de incidencias</h1>
 
-         
           <NouTicket />
         </div>
         <h2 className="mt-5">Tickets pendientes</h2>

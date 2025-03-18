@@ -35,7 +35,6 @@ export default function TicketsResolts({ tickets }) {
 
   useEffect(() => {
     if (selectedTicket) {
-      console.log(selectedTicket)
       setAula(selectedTicket.aula);
       setGrupo(selectedTicket.grupo);
       setOrdenador(selectedTicket.ordenador);

@@ -20,6 +20,10 @@ export default function TicketsPendents({ tickets }) {
     selectedTicket ? selectedTicket?.alumno : ""
   );
 
+  const [fecha, setFecha] = useState(
+    selectedTicket ? selectedTicket?.fecha : ""
+  );
+
   // crea un nuevo array con tickets y si el id coincide, actualiza la propiedad resuelto, sino, se devuelve el ticket sin actualizar
   const handleResolve = (id) => {
     const date = new Date();
@@ -69,6 +73,7 @@ export default function TicketsPendents({ tickets }) {
       setOrdenador(selectedTicket.ordenador);
       setDescripcion(selectedTicket.descripcion);
       setAlumno(selectedTicket.alumno);
+      setFecha(selectedTicket?.fecha)
     }
   }, [selectedTicket]);
 
@@ -121,10 +126,20 @@ export default function TicketsPendents({ tickets }) {
                 </button>
                 <button
                   onClick={() => handleRemove(ticket.id)}
-                  className="btn btn-danger"
+                  className="btn btn-danger me-1"
                   title="Eliminar ticket"
                 >
                   <i className="bi bi-trash3"></i>
+                </button>
+                {/* Boton para ver info del ticket */}
+                <button
+                  onClick={() => setSelectedTicket(ticket)}
+                  className="btn btn-info"
+                  data-bs-toggle="modal"
+                  data-bs-target="#modalInfo"
+                  title="Más Info"
+                >
+                  <i className="bi bi-info"></i>
                 </button>
               </td>
             </tr>
@@ -253,6 +268,65 @@ export default function TicketsPendents({ tickets }) {
               >
                 Guardar cambios
               </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Modal para ver información del ticket */}
+      <div
+        className="modal fade"
+        id="modalInfo"
+        tabIndex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="exampleModalLabel">
+                Información Ticket #{selectedTicket?.id}
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              {selectedTicket && (
+                <>
+                  <div className="mb-3">
+                    <label className="form-label text-decoration-underline">Aula: </label>
+                    <p>{aula}</p>
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label text-decoration-underline">Grupo: </label>
+                    <p>{grupo}</p>
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label text-decoration-underline">Ordenador: </label>
+                    <p>{ordenador}</p>
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label text-decoration-underline">Descripción: </label>
+                    <p>{descripcion}</p>
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label text-decoration-underline">Alumno: </label>
+                    <p>{alumno}</p>
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label text-decoration-underline">Fecha: </label>
+                    <p>{fecha}</p>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

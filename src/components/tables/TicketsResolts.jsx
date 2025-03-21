@@ -3,7 +3,7 @@ import { GestionContext } from "../../context/GestionContext";
 import { Link } from "react-router-dom";
 
 export default function TicketsResolts({ tickets }) {
-  const { setTiquetsTotal } = useContext(GestionContext);
+  const { setTiquetsTotal, usuarioActual } = useContext(GestionContext);
   const [selectedTicket, setSelectedTicket] = useState(null);
 
   const [aula, setAula] = useState(selectedTicket ? selectedTicket?.aula : "");
@@ -40,8 +40,8 @@ export default function TicketsResolts({ tickets }) {
       setOrdenador(selectedTicket.ordenador);
       setDescripcion(selectedTicket.descripcion);
       setAlumno(selectedTicket.alumno);
-      setFecha(selectedTicket.fecha)
-      setFechaResuelto(selectedTicket.fecha_resuelto)
+      setFecha(selectedTicket.fecha);
+      setFechaResuelto(selectedTicket.fecha_resuelto);
     }
   }, [selectedTicket]);
 
@@ -81,13 +81,15 @@ export default function TicketsResolts({ tickets }) {
                 </button>
               </td>
               <td>
-                <button
-                  onClick={() => handleRemove(ticket.id)}
-                  className="btn btn-danger"
-                  title="Eliminar ticket"
-                >
-                  <i className="bi bi-trash3"></i>
-                </button>
+                {usuarioActual?.rol == "admin" && (
+                  <button
+                    onClick={() => handleRemove(ticket.id)}
+                    className="btn btn-danger"
+                    title="Eliminar ticket"
+                  >
+                    <i className="bi bi-trash3"></i>
+                  </button>
+                )}
               </td>
               <td>
                 <button
@@ -168,7 +170,7 @@ export default function TicketsResolts({ tickets }) {
                     </label>
                     <p>{fecha}</p>
                   </div>
-                  
+
                   <div className="mb-3">
                     <label className="form-label text-decoration-underline">
                       Fecha Resuelto:{" "}

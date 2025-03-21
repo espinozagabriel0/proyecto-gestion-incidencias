@@ -165,17 +165,26 @@ const GestionProvider = ({children}) => {
       ];
   });
 
+  const [usuarioActual, setUsuarioActual] = useState(() => {
+    const storedUser = localStorage.getItem('usuari_actual');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+  
+
   useEffect(() => {
     localStorage.setItem('dades_tiquets', JSON.stringify(tiquetsTotal));
     localStorage.setItem('dades_usuaris', JSON.stringify(usuarios));
-  }, [tiquetsTotal, usuarios]);
+    localStorage.setItem('usuari_actual', JSON.stringify(usuarioActual)) 
+  }, [tiquetsTotal, usuarios, usuarioActual]);
 
   return (
     <GestionContext.Provider value={{
       tiquetsTotal, 
       setTiquetsTotal, 
       usuarios, 
-      setUsuarios
+      setUsuarios,
+      usuarioActual, 
+      setUsuarioActual
     }}>
       {children}
     </GestionContext.Provider>

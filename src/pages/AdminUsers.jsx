@@ -1,21 +1,33 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import HeaderMenu from "../components/HeaderMenu";
 import { GestionContext } from "../context/GestionContext";
 
 export default function AdminUsers() {
   const { usuarios, setUsuarios } = useContext(GestionContext);
-  console.log(usuarios);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [newRole, setNewRole] = useState("");
 
-  const handleRoleChange = (id, newRole) => {
-    console.log(newRole);
+  const handleRoleChange = (user, role) => {
+    setSelectedUser(user);
+    setNewRole(role);
+    setShowModal(true);
+  };
 
-    // Actualizar el rol del usuario por su id 
-    setUsuarios((prevUsuarios) =>
-      prevUsuarios.map((user) => (user.id == id ? {
-        ...user,
-        rol: newRole
-      } : user))
-    );
+  const handleConfirmChange = () => {
+    if (selectedUser && newRole) {
+      setUsuarios((prevUsuarios) =>
+        prevUsuarios.map((user) =>
+          user.id === selectedUser.id
+            ? {
+                ...user,
+                rol: newRole,
+              }
+            : user
+        )
+      );
+    }
+    setShowModal(false);
   };
 
   return (
@@ -35,7 +47,7 @@ export default function AdminUsers() {
             <select
               className="form-select"
               defaultValue={usuario?.rol}
-              onChange={(e) => handleRoleChange(usuario.id, e.target.value)}
+              onChange={(e) => handleRoleChange(usuario, e.target.value)}
             >
               <option value="user">User</option>
               <option value="admin">Admin</option>
@@ -43,6 +55,55 @@ export default function AdminUsers() {
             </select>
           </div>
         ))}
+
+        {showModal && (
+          <>
+            <div className="modal-backdrop fade show" style={{display: "block"}}></div>
+            <div
+              className="modal fade show"
+              style={{ display: "block" }}
+              tabIndex="-1"
+              role="dialog"
+              aria-labelledby="exampleModalCenterTitle"
+              aria-hidden="true"
+            >
+              <div className="modal-dialog modal-dialog-centered" role="document">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title" id="exampleModalLongTitle">
+                      Confirmar cambio de rol
+                    </h5>
+                    <button
+                      type="button"
+                      className="btn-close"
+                      onClick={() => setShowModal(false)}
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div className="modal-body">
+                    Se aplicarán estos cambios para el usuario {selectedUser?.nombre}: Rol {selectedUser?.rol} {'->'} {newRole}
+                  </div>
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => setShowModal(false)}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={handleConfirmChange}
+                    >
+                      Confirmar cambios
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
       </main>
     </div>
   );

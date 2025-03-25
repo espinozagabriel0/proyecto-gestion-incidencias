@@ -1,21 +1,22 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useContext} from "react";
+import { GestionContext } from "../context/GestionContext";
 
 export default function HeaderMenu() {
   // cargar email usuario actual si existe
-  const [currentUsermail] = useState(localStorage.getItem('usuari_actual') ? JSON.parse(localStorage.getItem('usuari_actual'))?.email : 'Inicia sesión')
+  const {usuarioActual, setUsuarioActual} = useContext(GestionContext)
   
   const navigate = useNavigate()
-
 
   // funcion para desloggear
   const handleLogout = () => {
     // localStorage.clear()
     localStorage.removeItem('usuari_actual')
+    setUsuarioActual(null)
     navigate('/')
   }
 
-  const isAdmin = JSON.parse(localStorage.getItem('usuari_actual'))?.rol == "admin"  
+  const isAdmin = usuarioActual?.rol === "admin"
   return (
       <header>
         <nav className="navbar navbar-light bg-light">
@@ -27,7 +28,7 @@ export default function HeaderMenu() {
               <Link to={"/register"} className="btn btn-secondary ms-2">REGISTRO</Link>
             </div>
             <div>
-              <span>{currentUsermail}</span>
+              <span>{usuarioActual?.email || 'Inicia sesión'}</span>
               <button onClick={() => handleLogout()} className="btn btn-danger ms-2">
                 <i className="bi bi-box-arrow-right"></i>
               </button>

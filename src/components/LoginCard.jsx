@@ -7,7 +7,7 @@ export default function LoginCard() {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const {usuarios} = useContext(GestionContext)
+  const {usuarios, setUsuarioActual} = useContext(GestionContext)
 
   const navigate = useNavigate()
 
@@ -18,8 +18,9 @@ export default function LoginCard() {
       const userExists = usuarios.find((user) => user.email == email && user.password == password)
       if (userExists) {
         // si existe, guardar en localStorage usuario actual y redirigir a panel
-        localStorage.setItem('usuari_actual', JSON.stringify(userExists)) 
-        
+        // localStorage.setItem('usuari_actual', JSON.stringify(userExists)) 
+        setUsuarioActual(userExists)
+
         navigate('/panel')
       }
 

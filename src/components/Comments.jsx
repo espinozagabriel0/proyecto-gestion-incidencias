@@ -6,16 +6,15 @@ import { GestionContext } from "../context/GestionContext";
 
 export default function Comments({ id }) {
   
-  const { tiquetsTotal, setTiquetsTotal } = useContext(GestionContext);
+  const { tiquetsTotal, setTiquetsTotal, usuarioActual} = useContext(GestionContext);
 
   // Al cargar componente, cargar comentarios de este ticket
   const [comentarios, setComentarios] = useState(tiquetsTotal.filter((tiquet) => tiquet.id == id)[0].comments || []);
 
-  const usuarioActual = JSON.parse(
-    localStorage.getItem("usuari_actual")
-  )?.nombre;
+  // const usuarioActual = JSON.parse(
+  //   localStorage.getItem("usuari_actual")
+  // )?.nombre;
 
-  
 
   const [commentBody, setCommentBody] = useState("");
   // const [commentDate, setCommentDate] = useState(new Date());
@@ -28,7 +27,7 @@ export default function Comments({ id }) {
     // Comprobar que estan todos los campos y de forma correcta, y guardar este comentario al array 'comments' del ticket seleccionado en localstorage
     e.preventDefault();
 
-    if (usuarioActual.length > 0) {
+    if (usuarioActual) {
       if (commentBody.length > 0) {
         const date = new Date()
         const formattedDate = date.toLocaleDateString()
@@ -38,7 +37,7 @@ export default function Comments({ id }) {
           {
             //
             id: comentarios.length++,
-            Author: usuarioActual,
+            Author: usuarioActual?.nombre,
             Date: formattedDate,
             CommentBody: commentBody,
           },

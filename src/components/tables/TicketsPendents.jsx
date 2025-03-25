@@ -3,7 +3,7 @@ import { GestionContext } from "../../context/GestionContext";
 import { Link } from "react-router-dom";
 
 export default function TicketsPendents({ tickets }) {
-  const { setTiquetsTotal } = useContext(GestionContext);
+  const { setTiquetsTotal, usuarioActual } = useContext(GestionContext);
   const [selectedTicket, setSelectedTicket] = useState(null);
 
   const [aula, setAula] = useState(selectedTicket ? selectedTicket?.aula : "");
@@ -73,7 +73,7 @@ export default function TicketsPendents({ tickets }) {
       setOrdenador(selectedTicket.ordenador);
       setDescripcion(selectedTicket.descripcion);
       setAlumno(selectedTicket.alumno);
-      setFecha(selectedTicket?.fecha)
+      setFecha(selectedTicket?.fecha);
     }
   }, [selectedTicket]);
 
@@ -93,7 +93,12 @@ export default function TicketsPendents({ tickets }) {
           </tr>
         </thead>
         <tbody>
-          {tickets.map((ticket) => (
+          {(usuarioActual?.rol == "user"
+            ? tickets.filter(
+                (ticketsFilter) => ticketsFilter?.usuarioId == usuarioActual?.id
+              )
+            : tickets
+          ).map((ticket) => (
             <tr key={ticket.id}>
               <td>{ticket.id}</td>
               <td>{ticket.fecha}</td>
@@ -103,34 +108,39 @@ export default function TicketsPendents({ tickets }) {
               <td>{ticket.descripcion}</td>
               <td>{ticket.alumno}</td>
               <td>
-                <button
-                  onClick={() => handleResolve(ticket.id)}
-                  className="btn btn-success me-1"
-                  title="Resolver ticket"
-                >
-                  Resolver
-                </button>
-                <button
-                  className="btn btn-warning me-1"
-                  title="Editar Ticket"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal"
-                  onClick={() => setSelectedTicket(ticket)}
-                >
-                  <i className="bi bi-pencil"></i>
-                </button>
+                {usuarioActual?.rol == "admin" && (
+                  <>
+                    <button
+                      onClick={() => handleResolve(ticket.id)}
+                      className="btn btn-success me-1"
+                      title="Resolver ticket"
+                    >
+                      Resolver
+                    </button>
+                    <button
+                      className="btn btn-warning me-1"
+                      title="Editar Ticket"
+                      data-bs-toggle="modal"
+                      data-bs-target="#exampleModal"
+                      onClick={() => setSelectedTicket(ticket)}
+                    >
+                      <i className="bi bi-pencil"></i>
+                    </button>
+                    <button
+                      onClick={() => handleRemove(ticket.id)}
+                      className="btn btn-danger me-1"
+                      title="Eliminar ticket"
+                    >
+                      <i className="bi bi-trash3"></i>
+                    </button>
+                  </>
+                )}
                 <button className="btn btn-info me-1" title="Ver comentarios">
                   <Link to={`/comments/${ticket.id}`}>
                     <i className="bi bi-chat-left-text"></i>
                   </Link>
                 </button>
-                <button
-                  onClick={() => handleRemove(ticket.id)}
-                  className="btn btn-danger me-1"
-                  title="Eliminar ticket"
-                >
-                  <i className="bi bi-trash3"></i>
-                </button>
+
                 {/* Boton para ver info del ticket */}
                 <button
                   onClick={() => setSelectedTicket(ticket)}
@@ -297,32 +307,44 @@ export default function TicketsPendents({ tickets }) {
               {selectedTicket && (
                 <>
                   <div className="mb-3">
-                    <label className="form-label text-decoration-underline">Aula: </label>
+                    <label className="form-label text-decoration-underline">
+                      Aula:{" "}
+                    </label>
                     <p>{aula}</p>
                   </div>
 
                   <div className="mb-3">
-                    <label className="form-label text-decoration-underline">Grupo: </label>
+                    <label className="form-label text-decoration-underline">
+                      Grupo:{" "}
+                    </label>
                     <p>{grupo}</p>
                   </div>
 
                   <div className="mb-3">
-                    <label className="form-label text-decoration-underline">Ordenador: </label>
+                    <label className="form-label text-decoration-underline">
+                      Ordenador:{" "}
+                    </label>
                     <p>{ordenador}</p>
                   </div>
 
                   <div className="mb-3">
-                    <label className="form-label text-decoration-underline">Descripción: </label>
+                    <label className="form-label text-decoration-underline">
+                      Descripción:{" "}
+                    </label>
                     <p>{descripcion}</p>
                   </div>
 
                   <div className="mb-3">
-                    <label className="form-label text-decoration-underline">Alumno: </label>
+                    <label className="form-label text-decoration-underline">
+                      Alumno:{" "}
+                    </label>
                     <p>{alumno}</p>
                   </div>
 
                   <div className="mb-3">
-                    <label className="form-label text-decoration-underline">Fecha: </label>
+                    <label className="form-label text-decoration-underline">
+                      Fecha:{" "}
+                    </label>
                     <p>{fecha}</p>
                   </div>
                 </>

@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import { GestionContext } from "../context/GestionContext";
 
 export default function NouTicket() {
-  const {setTiquetsTotal } = useContext(GestionContext);
+  const {setTiquetsTotal, usuarioActual} = useContext(GestionContext);
   
   const [aula, setAula] = useState("");
   const [grupo, setGrupo] = useState("");
@@ -34,6 +34,7 @@ export default function NouTicket() {
           alumno: alumno,
           comments: [],
           resuelto: false,
+          usuarioId: usuarioActual?.id
         },
       ]);
 

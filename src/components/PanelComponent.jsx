@@ -8,10 +8,7 @@ import NouTicket from "../pages/NouTicket";
 
 export default function PanelComponent() {
   // obtener array dadesTiquets y filtrar por propiedad resuelto
-  const { tiquetsTotal } = useContext(GestionContext);
-  const usuarioActual = JSON.parse(
-    localStorage.getItem("usuari_actual")
-  )?.nombre;
+  const { tiquetsTotal, usuarioActual } = useContext(GestionContext);
 
   const ticketsPendientes = tiquetsTotal.filter((ticket) => !ticket.resuelto);
 
@@ -21,14 +18,15 @@ export default function PanelComponent() {
     return <Navigate to={"/"} />;
   }
 
+  console.log(usuarioActual)
+
   return (
     <>
       <HeaderMenu />
       <main className="container mt-5">
         <div className="d-flex align-items-center justify-content-between">
           <h1>Administración de incidencias</h1>
-
-          <NouTicket />
+          {["admin", "user"].includes(usuarioActual?.rol) && <NouTicket />}
         </div>
         <h2 className="mt-5">Tickets pendientes</h2>
         <TicketsPendents tickets={ticketsPendientes} />
@@ -36,8 +34,6 @@ export default function PanelComponent() {
         <h2 className="mt-5">Tickets resueltos</h2>
         <TicketsResolts tickets={ticketsResueltos} />
       </main>
-
-     
     </>
   );
 }

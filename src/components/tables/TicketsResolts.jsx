@@ -63,7 +63,13 @@ export default function TicketsResolts({ tickets }) {
           </tr>
         </thead>
         <tbody>
-          {tickets.map((ticket) => (
+          {/* Si el usuario tiene el rol usuario estándard, solo puede crear y ver sus propios tiquets */}
+          {(usuarioActual?.rol == "user"
+            ? tickets.filter(
+                (ticketsFilter) => ticketsFilter?.usuarioId == usuarioActual?.id
+              )
+            : tickets
+          ).map((ticket) => (
             <tr key={ticket.id}>
               <td>{ticket.id}</td>
               <td>{ticket.fecha}</td>

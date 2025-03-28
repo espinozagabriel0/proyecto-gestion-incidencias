@@ -4,35 +4,70 @@ import { GestionContext } from "../context/GestionContext";
 
 export default function RegisterCard() {
 
-  const {usuarios, setUsuarios} = useContext(GestionContext)
+  const {usuarios, setUsuarios, register} = useContext(GestionContext)
   const [nom, setNom] = useState('')
   const [userEmail, setUserEmail] = useState('')
   const [password, setPassword] = useState('')
   const [succes, setSuccess] = useState(false)
 
 // Funcion handler submit registro
-  const handleSubmit = (e) => {
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  
+  //   // Crear nuevo usuario
+  //   const nuevoUsuario = {
+  //     rol: "user",
+  //     nombre: nom,
+  //     id: usuarios.length + 1,
+  //     email: userEmail,
+  //     password: password
+  //   };
+  
+  //   // Añadir nuevo usuario al array
+  //   setUsuarios((prevData) => [...prevData, nuevoUsuario])
+  //   limpiarInputs()
+
+  //   // mensaje de exito y settimeout para borrar 
+  //   setSuccess(true)
+
+  //   setTimeout(() => {
+  //     setSuccess(false)
+  //   }, 3000);
+  // };
+// Funcion handler submit registro
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
   
+    const result = await register(userEmail, password, nom)
+
+    console.log(result)
+
+    if (result.success) {
+      limpiarInputs()
+      setSuccess(true)
+
+      setTimeout(() => {
+        setSuccess(false)
+      }, 3000);
+      console.log("Registro exitoso:", result.data);
+    } else {
+      console.error("Error en el registro:", result.error);
+    }
+
     // Crear nuevo usuario
-    const nuevoUsuario = {
-      rol: "user",
-      nombre: nom,
-      id: usuarios.length + 1,
-      email: userEmail,
-      password: password
-    };
+    // const nuevoUsuario = {
+    //   rol: "user",
+    //   nombre: nom,
+    //   id: usuarios.length + 1,
+    //   email: userEmail,
+    //   password: password
+    // };
   
-    // Añadir nuevo usuario al array
-    setUsuarios((prevData) => [...prevData, nuevoUsuario])
-    limpiarInputs()
+    // // Añadir nuevo usuario al array
+    // setUsuarios((prevData) => [...prevData, nuevoUsuario])
 
-    // mensaje de exito y settimeout para borrar 
-    setSuccess(true)
-
-    setTimeout(() => {
-      setSuccess(false)
-    }, 3000);
+    // // mensaje de exito y settimeout para borrar 
   };
 
   const limpiarInputs = () => {

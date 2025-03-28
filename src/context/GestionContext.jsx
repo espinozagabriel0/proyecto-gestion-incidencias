@@ -1,8 +1,57 @@
 import { createContext, useState, useEffect } from "react";
-
+import {supabase} from "../supabase/supabase";
 const GestionContext = createContext();
 
 const GestionProvider = ({children}) => {
+  const [session, setSession] = useState(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+    return () => subscription.unsubscribe()
+  }, [])
+
+
+  const login = async (email, password) => {
+    const {data, error} = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      return { error: error.message };
+    }
+    return { data };
+  }
+  
+
+  const register = async (email, password, name) => {
+    const { data: authData, error: authError } = await supabase.auth.signUp({email, password})
+    if (authError) {
+      return {error: authError.message}
+    }
+
+    // Insertar el nuevo usuario en la tabla 'public.usuarios'
+    const {data: userData, error: userError} = await supabase.from('Users').insert([{
+      role: 'user',
+      name: name,
+      user_id: authData.user.id,
+      email: email
+    }])
+
+
+    if (userError) {
+      await supabase.auth.admin.deleteUser(authData.user.id); 
+      return { error: userError.message };
+    }
+
+    return {data: userData}
+  }
+  
+
+  
   const [tiquetsTotal, setTiquetsTotal] = useState(() => {
     const storedTiquets = localStorage.getItem('dades_tiquets');
     return storedTiquets ? JSON.parse(storedTiquets) : [
@@ -195,7 +244,8 @@ const GestionProvider = ({children}) => {
       usuarios, 
       setUsuarios,
       usuarioActual, 
-      setUsuarioActual
+      setUsuarioActual,
+      register
     }}>
       {children}
     </GestionContext.Provider>

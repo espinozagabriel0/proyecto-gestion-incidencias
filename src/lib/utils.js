@@ -72,3 +72,23 @@ export async function resolverTicket(idTicket) {
     throw error;
   }
 }
+// Eliminar ticket
+export async function eliminarTicket(idTicket) {
+  try {
+    const { data, error } = await supabase
+      .from("Tickets")
+      .delete()
+      .eq("id", idTicket)
+      .select();
+
+    if (error) {
+      console.error("Error al eliminar el ticket:", error);
+      throw error;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error("Error al resolver el ticket:", error.message);
+    throw error;
+  }
+}

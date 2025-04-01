@@ -3,9 +3,10 @@ import { GestionContext } from "../../context/GestionContext";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { eliminarTicket, getTickets } from "../../lib/utils";
 
 export default function TicketsResolts({ tickets }) {
-  const { setTiquetsTotal, usuarioActual } = useContext(GestionContext);
+  const { setTiquetsTotal, usuarioActual, setTickets} = useContext(GestionContext);
   const [selectedTicket, setSelectedTicket] = useState(null);
 
   const [aula, setAula] = useState(selectedTicket ? selectedTicket?.aula : "");
@@ -28,13 +29,23 @@ export default function TicketsResolts({ tickets }) {
     selectedTicket ? selectedTicket?.date_solved : ""
   );
 
-  const handleRemove = (id) => {
-    // sobreescribe el array en localStorage sin el ticket seleccionado
-    setTiquetsTotal((prevTickets) =>
-      prevTickets.filter((ticket) => ticket.id !== id)
-    );
-  };
+  // const handleRemove = (id) => {
+  //   // sobreescribe el array en localStorage sin el ticket seleccionado
+  //   setTiquetsTotal((prevTickets) =>
+  //     prevTickets.filter((ticket) => ticket.id !== id)
+  //   );
+  // };
+  const handleRemove = async (id) => {
+    try {
+      const ticketEliminado = await eliminarTicket(id);
+      console.log("Ticket eliminado:", ticketEliminado);
 
+      const updatedTickets = await getTickets();
+      setTickets(updatedTickets);
+    } catch (error) {
+      console.error("Error al eliminar el ticket:", error);
+    }
+  };
   useEffect(() => {
     if (selectedTicket) {
       setAula(selectedTicket.aula);
@@ -75,7 +86,12 @@ export default function TicketsResolts({ tickets }) {
             ).map((ticket) => (
               <tr key={ticket.id}>
                 <td>{ticket?.id}</td>
-                <td>{ticket && format(ticket?.created_at, "dd/MM/yyyy HH:mm", {locale: es,})}</td>
+                <td>
+                  {ticket &&
+                    format(ticket?.created_at, "dd/MM/yyyy HH:mm", {
+                      locale: es,
+                    })}
+                </td>
                 <td>{ticket?.date_solved}</td>
                 <td>{ticket?.aula}</td>
                 <td>{ticket?.grupo}</td>
@@ -184,14 +200,20 @@ export default function TicketsResolts({ tickets }) {
                     <label className="form-label text-decoration-underline">
                       Fecha:{" "}
                     </label>
-                    <p>{fecha && format(fecha, "dd/MM/yyyy HH:mm", {locale: es})}</p>
+                    <p>
+                      {fecha &&
+                        format(fecha, "dd/MM/yyyy HH:mm", { locale: es })}
+                    </p>
                   </div>
 
                   <div className="mb-3">
                     <label className="form-label text-decoration-underline">
                       Fecha Resuelto:{" "}
                     </label>
-                    <p>{fechaResuelto && format(fechaResuelto, "dd/MM/yyyy", {locale: es})}</p>
+                    <p>
+                      {fechaResuelto &&
+                        format(fechaResuelto, "dd/MM/yyyy", { locale: es })}
+                    </p>
                   </div>
                 </>
               )}

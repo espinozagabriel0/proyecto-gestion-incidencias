@@ -3,7 +3,7 @@ import { GestionContext } from "../../context/GestionContext";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { resolverTicket, getTickets } from "../../lib/utils";
+import { resolverTicket, getTickets, eliminarTicket } from "../../lib/utils";
 
 export default function TicketsPendents({ tickets }) {
   const { setTiquetsTotal, usuarioActual, setTickets } = useContext(GestionContext);
@@ -52,11 +52,22 @@ export default function TicketsPendents({ tickets }) {
     }
   };
 
-  const handleRemove = (id) => {
-    // sobreescribe el array en localStorage sin el ticket seleccionado
-    setTiquetsTotal((prevTickets) =>
-      prevTickets.filter((ticket) => ticket.id !== id)
-    );
+  // const handleRemove = (id) => {
+  //   // sobreescribe el array en localStorage sin el ticket seleccionado
+  //   setTiquetsTotal((prevTickets) =>
+  //     prevTickets.filter((ticket) => ticket.id !== id)
+  //   );
+  // };
+  const handleRemove = async (id) => {
+    try {
+      const ticketEliminado = await eliminarTicket(id);
+      console.log("Ticket eliminado:", ticketEliminado);
+
+      const updatedTickets = await getTickets();
+      setTickets(updatedTickets)
+    } catch (error) {
+      console.error("Error al eliminar el ticket:", error);
+    }
   };
 
   const handleUpdateTicket = (e) => {

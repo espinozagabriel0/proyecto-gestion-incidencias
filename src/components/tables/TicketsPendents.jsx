@@ -3,9 +3,10 @@ import { GestionContext } from "../../context/GestionContext";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { resolverTicket, getTickets } from "../../lib/utils";
 
 export default function TicketsPendents({ tickets }) {
-  const { setTiquetsTotal, usuarioActual } = useContext(GestionContext);
+  const { setTiquetsTotal, usuarioActual, setTickets } = useContext(GestionContext);
   const [selectedTicket, setSelectedTicket] = useState(null);
 
   const [aula, setAula] = useState(selectedTicket ? selectedTicket?.aula : "");
@@ -27,17 +28,28 @@ export default function TicketsPendents({ tickets }) {
   );
 
   // crea un nuevo array con tickets y si el id coincide, actualiza la propiedad resuelto, sino, se devuelve el ticket sin actualizar
-  const handleResolve = (id) => {
-    const date = new Date();
-    const formattedDate = date.toLocaleDateString();
+  // const handleResolve = (id) => {
+  //   const date = new Date();
+  //   const formattedDate = date.toLocaleDateString();
 
-    setTiquetsTotal((prevTickets) =>
-      prevTickets.map((ticket) =>
-        ticket.id == id
-          ? { ...ticket, resuelto: true, fecha_resuelto: formattedDate }
-          : ticket
-      )
-    );
+  //   setTiquetsTotal((prevTickets) =>
+  //     prevTickets.map((ticket) =>
+  //       ticket.id == id
+  //         ? { ...ticket, resuelto: true, fecha_resuelto: formattedDate }
+  //         : ticket
+  //     )
+  //   );
+  // };
+  const handleResolve = async (id) => {
+    try {
+      const ticketResuelto = await resolverTicket(id);
+      console.log("Ticket resuelto:", ticketResuelto);
+
+      const updatedTickets = await getTickets();
+      setTickets(updatedTickets);
+    } catch (error) {
+      console.error("Error al resolver el ticket:", error);
+    }
   };
 
   const handleRemove = (id) => {
@@ -105,7 +117,11 @@ export default function TicketsPendents({ tickets }) {
             ).map((ticket) => (
               <tr key={ticket.id}>
                 <td>{ticket?.id}</td>
-                <td>{format(ticket?.created_at, "dd/MM/yyyy HH:mm", {locale: es})}</td>
+                <td>
+                  {format(ticket?.created_at, "dd/MM/yyyy HH:mm", {
+                    locale: es,
+                  })}
+                </td>
                 <td>{ticket?.aula}</td>
                 <td>{ticket?.grupo}</td>
                 <td>{ticket?.ordenador}</td>
@@ -356,7 +372,10 @@ export default function TicketsPendents({ tickets }) {
                     <label className="form-label text-decoration-underline">
                       Fecha:{" "}
                     </label>
-                    <p>{fecha && format(fecha, "dd/MM/yyyy HH:mm", {locale: es})}</p>
+                    <p>
+                      {fecha &&
+                        format(fecha, "dd/MM/yyyy HH:mm", { locale: es })}
+                    </p>
                   </div>
                 </>
               )}

@@ -48,3 +48,27 @@ export async function crearTicket(data) {
     throw error;
   }
 }
+// Resolver Ticket
+export async function resolverTicket(idTicket) {
+  try {
+    const now = new Date();
+    const utcTimestamp = now.toISOString().replace("Z", "+00");
+
+    const { data, error } = await supabase
+      .from("Tickets")
+      .update({ resuelto: true, date_solved: utcTimestamp })
+      .eq("id", idTicket)
+      .select();
+
+    if (error) {
+      console.error("Error al resolver el ticket:", error);
+      throw error;
+    }
+
+    console.log("Ticket resuelto:", data[0]);
+    return data[0];
+  } catch (error) {
+    console.error("Error al resolver el ticket:", error.message);
+    throw error;
+  }
+}

@@ -22,10 +22,10 @@ export default function TicketsResolts({ tickets }) {
     selectedTicket ? selectedTicket?.alumno : ""
   );
   const [fecha, setFecha] = useState(
-    selectedTicket ? selectedTicket?.fecha : ""
+    selectedTicket ? selectedTicket?.created_at : ""
   );
   const [fechaResuelto, setFechaResuelto] = useState(
-    selectedTicket ? selectedTicket?.fecha_resuelto : ""
+    selectedTicket ? selectedTicket?.date_solved : ""
   );
 
   const handleRemove = (id) => {
@@ -42,8 +42,8 @@ export default function TicketsResolts({ tickets }) {
       setOrdenador(selectedTicket.ordenador);
       setDescripcion(selectedTicket.descripcion);
       setAlumno(selectedTicket.alumno);
-      setFecha(selectedTicket.fecha);
-      setFechaResuelto(selectedTicket.fecha_resuelto);
+      setFecha(selectedTicket.created_at);
+      setFechaResuelto(selectedTicket.date_solved);
     }
   }, [selectedTicket]);
 
@@ -75,8 +75,8 @@ export default function TicketsResolts({ tickets }) {
             ).map((ticket) => (
               <tr key={ticket.id}>
                 <td>{ticket?.id}</td>
-                <td>{ticket?.created_at}</td>
-                <td>{ticket?.fecha_resuelto}</td>
+                <td>{ticket && format(ticket?.created_at, "dd/MM/yyyy HH:mm", {locale: es,})}</td>
+                <td>{ticket?.date_solved}</td>
                 <td>{ticket?.aula}</td>
                 <td>{ticket?.grupo}</td>
                 <td>{ticket?.ordenador}</td>
@@ -184,14 +184,14 @@ export default function TicketsResolts({ tickets }) {
                     <label className="form-label text-decoration-underline">
                       Fecha:{" "}
                     </label>
-                    <p>{fecha}</p>
+                    <p>{fecha && format(fecha, "dd/MM/yyyy HH:mm", {locale: es})}</p>
                   </div>
 
                   <div className="mb-3">
                     <label className="form-label text-decoration-underline">
                       Fecha Resuelto:{" "}
                     </label>
-                    <p>{fechaResuelto && format(fechaResuelto, "dd/MM/yyyy HH:mm", {locale: es})}</p>
+                    <p>{fechaResuelto && format(fechaResuelto, "dd/MM/yyyy", {locale: es})}</p>
                   </div>
                 </>
               )}

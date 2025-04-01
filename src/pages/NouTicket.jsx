@@ -2,54 +2,84 @@
 
 import { useContext, useState } from "react";
 import { GestionContext } from "../context/GestionContext";
+import { crearTicket } from "../lib/utils";
 
 export default function NouTicket() {
-  const {setTiquetsTotal, usuarioActual} = useContext(GestionContext);
-  
+  const { setTiquetsTotal, usuarioActual } = useContext(GestionContext);
+
   const [aula, setAula] = useState("");
   const [grupo, setGrupo] = useState("");
   const [ordenador, setOrdenador] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [alumno, setAlumno] = useState("");
 
-  const handleCrearTicket = (e) => {
+  // const handleCrearTicket = (e) => {
+  //   e.preventDefault();
+
+  //   console.log(aula);
+
+  //   if (aula && grupo && ordenador && descripcion && alumno) {
+  //     const date = new Date();
+  //     const formattedDate = date.toLocaleDateString();
+
+  //     setTiquetsTotal((prevTiquets) => [
+  //       ...prevTiquets,
+  //       {
+  //         id: prevTiquets.length + 1,
+  //         fecha: formattedDate,
+  //         // fecha_resuelto: "13/02/2025", --> por defecto no está esta propiedad, se cambia en ticketsPendents
+  //         aula: aula,
+  //         grupo: grupo,
+  //         ordenador: ordenador,
+  //         descripcion: descripcion,
+  //         alumno: alumno,
+  //         comments: [],
+  //         resuelto: false,
+  //         usuarioId: usuarioActual?.id,
+  //       },
+  //     ]);
+
+  //     limpiarInputs();
+  //   }
+  // };
+  const handleCrearTicket = async(e) => {
     e.preventDefault();
 
-    console.log(aula)
+    console.log(usuarioActual)
+    if (!usuarioActual?.id) return;
 
-    if (aula && grupo && ordenador && descripcion && alumno) {
-      const date = new Date();
-      const formattedDate = date.toLocaleDateString();
 
-      setTiquetsTotal((prevTiquets) => [
-        ...prevTiquets,
-        {
-          id: prevTiquets.length + 1,
-          fecha: formattedDate,
-          // fecha_resuelto: "13/02/2025", --> por defecto no está esta propiedad, se cambia en ticketsPendents
-          aula: aula,
-          grupo: grupo,
-          ordenador: ordenador,
-          descripcion: descripcion,
-          alumno: alumno,
-          comments: [],
-          resuelto: false,
-          usuarioId: usuarioActual?.id
-        },
-      ]);
+    console.log('DATOS: ', aula, grupo, ordenador, descripcion, alumno)
+    if (aula && grupo && ordenador && descripcion) {
+      const newTicket = {
+        aula: aula,
+        grupo: grupo,
+        ordenador: ordenador,
+        descripcion: descripcion,
+        alumno: usuarioActual?.role == "user" ? usuarioActual?.name : alumno,
+        usuarioId: usuarioActual?.id
+      }
 
-      limpiarInputs()
+      console.log(newTicket)
 
+      try {
+        const createdTicket = await crearTicket(newTicket);
+        console.log("Ticket creado:", createdTicket);
+        limpiarInputs();
+
+      } catch (error) {
+        console.error("Error al crear el ticket:", error);
+      }
     }
   };
 
   const limpiarInputs = () => {
-    setAula("")
-    setGrupo("")
-    setOrdenador("")
-    setDescripcion("")
-    setAlumno("")
-  }
+    setAula("");
+    setGrupo("");
+    setOrdenador("");
+    setDescripcion("");
+    setAlumno("");
+  };
 
   return (
     <>
@@ -156,16 +186,30 @@ export default function NouTicket() {
                     <label htmlFor="alumno" className="form-label">
                       Alumno
                     </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="alumno"
-                      value={alumno}
-                      onChange={(e) => setAlumno(e.target.value)}
-                      name="alumno"
-                      placeholder="Introduce el nombre del alumno"
-                      required
-                    />
+                    {usuarioActual?.role == "user" ? (
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="alumno"
+                        value={usuarioActual?.name}
+                        // onChange={(e) => setAlumno(e.target.value)}
+                        name="alumno"
+                        placeholder="Introduce el nombre del alumno"
+                        required
+                        readOnly
+                      />
+                    ) : (
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="alumno"
+                        value={alumno}
+                        onChange={(e) => setAlumno(e.target.value)}
+                        name="alumno"
+                        placeholder="Introduce el nombre del alumno"
+                        required
+                      />
+                    )}
                   </div>
                 </form>
               </div>
@@ -177,7 +221,12 @@ export default function NouTicket() {
                 >
                   Cerrar
                 </button>
-                <button type="submit" form="ticketForm" className="btn btn-primary" data-bs-dismiss="modal">
+                <button
+                  type="submit"
+                  form="ticketForm"
+                  className="btn btn-primary"
+                  data-bs-dismiss="modal"
+                >
                   Crear Ticket
                 </button>
               </div>

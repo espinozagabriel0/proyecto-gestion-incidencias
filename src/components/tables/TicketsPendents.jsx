@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { GestionContext } from "../../context/GestionContext";
 import { Link } from "react-router-dom";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 export default function TicketsPendents({ tickets }) {
   const { setTiquetsTotal, usuarioActual } = useContext(GestionContext);
@@ -73,7 +75,7 @@ export default function TicketsPendents({ tickets }) {
       setOrdenador(selectedTicket.ordenador);
       setDescripcion(selectedTicket.descripcion);
       setAlumno(selectedTicket.alumno);
-      setFecha(selectedTicket?.fecha);
+      setFecha(selectedTicket?.created_at);
     }
   }, [selectedTicket]);
 
@@ -102,13 +104,13 @@ export default function TicketsPendents({ tickets }) {
               : tickets
             ).map((ticket) => (
               <tr key={ticket.id}>
-                <td>{ticket.id}</td>
-                <td>{ticket.fecha}</td>
-                <td>{ticket.aula}</td>
-                <td>{ticket.grupo}</td>
-                <td>{ticket.ordenador}</td>
-                <td>{ticket.descripcion}</td>
-                <td>{ticket.alumno}</td>
+                <td>{ticket?.id}</td>
+                <td>{format(ticket?.created_at, "dd/MM/yyyy HH:mm", {locale: es})}</td>
+                <td>{ticket?.aula}</td>
+                <td>{ticket?.grupo}</td>
+                <td>{ticket?.ordenador}</td>
+                <td>{ticket?.descripcion}</td>
+                <td>{ticket?.alumno}</td>
                 <td>
                   {usuarioActual?.role == "admin" && (
                     <>
@@ -354,7 +356,7 @@ export default function TicketsPendents({ tickets }) {
                     <label className="form-label text-decoration-underline">
                       Fecha:{" "}
                     </label>
-                    <p>{fecha}</p>
+                    <p>{format(fecha, "dd/MM/yyyy HH:mm", {locale: es})}</p>
                   </div>
                 </>
               )}

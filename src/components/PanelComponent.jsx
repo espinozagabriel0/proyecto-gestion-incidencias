@@ -33,9 +33,10 @@ export default function PanelComponent() {
     return <Navigate to={"/"} />;
   }
 
-  const ticketsPendientes = tickets?.filter((ticket) => !ticket.resuelto || []);
+  const ticketsPendientes = tickets?.filter((ticket) => !ticket.resuelto) || [];
 
-  const ticketsResueltos = tickets?.filter((ticket) => ticket.resuelto || []);
+  const ticketsResueltos = tickets?.filter((ticket) => ticket.resuelto) || [];
+
 
   console.log(tickets)
 

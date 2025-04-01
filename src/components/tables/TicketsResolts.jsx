@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { GestionContext } from "../../context/GestionContext";
 import { Link } from "react-router-dom";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 export default function TicketsResolts({ tickets }) {
   const { setTiquetsTotal, usuarioActual } = useContext(GestionContext);
@@ -72,14 +74,14 @@ export default function TicketsResolts({ tickets }) {
               : tickets
             ).map((ticket) => (
               <tr key={ticket.id}>
-                <td>{ticket.id}</td>
-                <td>{ticket.fecha}</td>
-                <td>{ticket.fecha_resuelto}</td>
-                <td>{ticket.aula}</td>
-                <td>{ticket.grupo}</td>
-                <td>{ticket.ordenador}</td>
-                <td>{ticket.descripcion}</td>
-                <td>{ticket.alumno}</td>
+                <td>{ticket?.id}</td>
+                <td>{ticket?.created_at}</td>
+                <td>{ticket?.fecha_resuelto}</td>
+                <td>{ticket?.aula}</td>
+                <td>{ticket?.grupo}</td>
+                <td>{ticket?.ordenador}</td>
+                <td>{ticket?.descripcion}</td>
+                <td>{ticket?.alumno}</td>
                 <td>
                   <button className="btn btn-info" title="Ver comentarios">
                     <Link to={`/comments/${ticket.id}`}>
@@ -189,7 +191,7 @@ export default function TicketsResolts({ tickets }) {
                     <label className="form-label text-decoration-underline">
                       Fecha Resuelto:{" "}
                     </label>
-                    <p>{fechaResuelto}</p>
+                    <p>{format(fechaResuelto, "dd/MM/yyyy HH:mm", {locale: es})}</p>
                   </div>
                 </>
               )}

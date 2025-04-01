@@ -93,67 +93,76 @@ export default function TicketsPendents({ tickets }) {
           </tr>
         </thead>
         <tbody>
-          {(usuarioActual?.role == "user"
-            ? tickets.filter(
-                (ticketsFilter) => ticketsFilter?.usuarioId == usuarioActual?.id
-              )
-            : tickets
-          ).map((ticket) => (
-            <tr key={ticket.id}>
-              <td>{ticket.id}</td>
-              <td>{ticket.fecha}</td>
-              <td>{ticket.aula}</td>
-              <td>{ticket.grupo}</td>
-              <td>{ticket.ordenador}</td>
-              <td>{ticket.descripcion}</td>
-              <td>{ticket.alumno}</td>
-              <td>
-                {usuarioActual?.role == "admin" && (
-                  <>
-                    <button
-                      onClick={() => handleResolve(ticket.id)}
-                      className="btn btn-success me-1"
-                      title="Resolver ticket"
-                    >
-                      Resolver
-                    </button>
-                    <button
-                      className="btn btn-warning me-1"
-                      title="Editar Ticket"
-                      data-bs-toggle="modal"
-                      data-bs-target="#exampleModal"
-                      onClick={() => setSelectedTicket(ticket)}
-                    >
-                      <i className="bi bi-pencil"></i>
-                    </button>
-                    <button
-                      onClick={() => handleRemove(ticket.id)}
-                      className="btn btn-danger me-1"
-                      title="Eliminar ticket"
-                    >
-                      <i className="bi bi-trash3"></i>
-                    </button>
-                  </>
-                )}
-                <button className="btn btn-info me-1" title="Ver comentarios">
-                  <Link to={`/comments/${ticket.id}`}>
-                    <i className="bi bi-chat-left-text"></i>
-                  </Link>
-                </button>
+          {tickets && tickets.length > 0 ? (
+            (usuarioActual?.role == "user"
+              ? tickets.filter(
+                  (ticketsFilter) =>
+                    ticketsFilter?.usuarioId == usuarioActual?.id
+                )
+              : tickets
+            ).map((ticket) => (
+              <tr key={ticket.id}>
+                <td>{ticket.id}</td>
+                <td>{ticket.fecha}</td>
+                <td>{ticket.aula}</td>
+                <td>{ticket.grupo}</td>
+                <td>{ticket.ordenador}</td>
+                <td>{ticket.descripcion}</td>
+                <td>{ticket.alumno}</td>
+                <td>
+                  {usuarioActual?.role == "admin" && (
+                    <>
+                      <button
+                        onClick={() => handleResolve(ticket.id)}
+                        className="btn btn-success me-1"
+                        title="Resolver ticket"
+                      >
+                        Resolver
+                      </button>
+                      <button
+                        className="btn btn-warning me-1"
+                        title="Editar Ticket"
+                        data-bs-toggle="modal"
+                        data-bs-target="#exampleModal"
+                        onClick={() => setSelectedTicket(ticket)}
+                      >
+                        <i className="bi bi-pencil"></i>
+                      </button>
+                      <button
+                        onClick={() => handleRemove(ticket.id)}
+                        className="btn btn-danger me-1"
+                        title="Eliminar ticket"
+                      >
+                        <i className="bi bi-trash3"></i>
+                      </button>
+                    </>
+                  )}
+                  <button className="btn btn-info me-1" title="Ver comentarios">
+                    <Link to={`/comments/${ticket.id}`}>
+                      <i className="bi bi-chat-left-text"></i>
+                    </Link>
+                  </button>
 
-                {/* Boton para ver info del ticket */}
-                <button
-                  onClick={() => setSelectedTicket(ticket)}
-                  className="btn btn-info"
-                  data-bs-toggle="modal"
-                  data-bs-target="#modalInfo"
-                  title="Más Info"
-                >
-                  <i className="bi bi-info"></i>
-                </button>
+                  {/* Boton para ver info del ticket */}
+                  <button
+                    onClick={() => setSelectedTicket(ticket)}
+                    className="btn btn-info"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalInfo"
+                    title="Más Info"
+                  >
+                    <i className="bi bi-info"></i>
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="8" className="text-center">
+                No hay tickets pendientes en este momento.
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
       {/* Modal Para Editar*/}

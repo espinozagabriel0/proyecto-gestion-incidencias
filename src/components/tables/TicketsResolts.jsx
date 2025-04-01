@@ -63,53 +63,61 @@ export default function TicketsResolts({ tickets }) {
           </tr>
         </thead>
         <tbody>
-          {/* Si el usuario tiene el rol usuario estándard, solo puede crear y ver sus propios tiquets */}
-          {(usuarioActual?.role == "user"
-            ? tickets.filter(
-                (ticketsFilter) => ticketsFilter?.usuarioId == usuarioActual?.id
-              )
-            : tickets
-          ).map((ticket) => (
-            <tr key={ticket.id}>
-              <td>{ticket.id}</td>
-              <td>{ticket.fecha}</td>
-              <td>{ticket.fecha_resuelto}</td>
-              <td>{ticket.aula}</td>
-              <td>{ticket.grupo}</td>
-              <td>{ticket.ordenador}</td>
-              <td>{ticket.descripcion}</td>
-              <td>{ticket.alumno}</td>
-              <td>
-                <button className="btn btn-info" title="Ver comentarios">
-                  <Link to={`/comments/${ticket.id}`}>
-                    <i className="bi bi-chat-left-text"></i>
-                  </Link>
-                </button>
-              </td>
-              <td>
-                {usuarioActual?.role == "admin" && (
-                  <button
-                    onClick={() => handleRemove(ticket.id)}
-                    className="btn btn-danger"
-                    title="Eliminar ticket"
-                  >
-                    <i className="bi bi-trash3"></i>
+          {tickets && tickets.length > 0 ? (
+            (usuarioActual?.role == "user"
+              ? tickets.filter(
+                  (ticketsFilter) =>
+                    ticketsFilter?.usuarioId == usuarioActual?.id
+                )
+              : tickets
+            ).map((ticket) => (
+              <tr key={ticket.id}>
+                <td>{ticket.id}</td>
+                <td>{ticket.fecha}</td>
+                <td>{ticket.fecha_resuelto}</td>
+                <td>{ticket.aula}</td>
+                <td>{ticket.grupo}</td>
+                <td>{ticket.ordenador}</td>
+                <td>{ticket.descripcion}</td>
+                <td>{ticket.alumno}</td>
+                <td>
+                  <button className="btn btn-info" title="Ver comentarios">
+                    <Link to={`/comments/${ticket.id}`}>
+                      <i className="bi bi-chat-left-text"></i>
+                    </Link>
                   </button>
-                )}
-              </td>
-              <td>
-                <button
-                  onClick={() => setSelectedTicket(ticket)}
-                  className="btn btn-info"
-                  data-bs-toggle="modal"
-                  data-bs-target="#modalInfo2"
-                  title="Más Info"
-                >
-                  <i className="bi bi-info"></i>
-                </button>
+                </td>
+                <td>
+                  {usuarioActual?.role == "admin" && (
+                    <button
+                      onClick={() => handleRemove(ticket.id)}
+                      className="btn btn-danger"
+                      title="Eliminar ticket"
+                    >
+                      <i className="bi bi-trash3"></i>
+                    </button>
+                  )}
+                </td>
+                <td>
+                  <button
+                    onClick={() => setSelectedTicket(ticket)}
+                    className="btn btn-info"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalInfo2"
+                    title="Más Info"
+                  >
+                    <i className="bi bi-info"></i>
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="11" className="text-center">
+                No hay tickets resueltos en este momento.
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
       <div

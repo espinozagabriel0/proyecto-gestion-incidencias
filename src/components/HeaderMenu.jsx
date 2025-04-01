@@ -4,19 +4,24 @@ import { GestionContext } from "../context/GestionContext";
 
 export default function HeaderMenu() {
   // cargar email usuario actual si existe
-  const {usuarioActual, setUsuarioActual} = useContext(GestionContext)
+  const {usuarioActual, setUsuarioActual, signOut} = useContext(GestionContext)
   
   const navigate = useNavigate()
 
   // funcion para desloggear
-  const handleLogout = () => {
+  // const handleLogout = () => {
+  //   // localStorage.clear()
+  //   localStorage.removeItem('usuari_actual')
+  //   setUsuarioActual(null)
+  //   navigate('/')
+  // }
+  const handleLogout = async () => {
     // localStorage.clear()
-    localStorage.removeItem('usuari_actual')
-    setUsuarioActual(null)
+    await signOut()
     navigate('/')
   }
 
-  const isAdmin = usuarioActual?.rol === "admin"
+  const isAdmin = usuarioActual?.role === "admin"
   return (
       <header>
         <nav className="navbar navbar-light bg-light">

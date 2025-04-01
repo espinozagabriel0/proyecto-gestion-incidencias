@@ -64,7 +64,7 @@ export default function TicketsResolts({ tickets }) {
         </thead>
         <tbody>
           {/* Si el usuario tiene el rol usuario estándard, solo puede crear y ver sus propios tiquets */}
-          {(usuarioActual?.rol == "user"
+          {(usuarioActual?.role == "user"
             ? tickets.filter(
                 (ticketsFilter) => ticketsFilter?.usuarioId == usuarioActual?.id
               )
@@ -87,7 +87,7 @@ export default function TicketsResolts({ tickets }) {
                 </button>
               </td>
               <td>
-                {usuarioActual?.rol == "admin" && (
+                {usuarioActual?.role == "admin" && (
                   <button
                     onClick={() => handleRemove(ticket.id)}
                     className="btn btn-danger"

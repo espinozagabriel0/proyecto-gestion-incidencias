@@ -1,9 +1,10 @@
 import { useContext, useState } from "react";
 import HeaderMenu from "../components/HeaderMenu";
 import { GestionContext } from "../context/GestionContext";
+import { Navigate } from "react-router-dom";
 
 export default function AdminUsers() {
-  const { usuarios, setUsuarios } = useContext(GestionContext);
+  const { usuarios, setUsuarios, usuarioActual } = useContext(GestionContext);
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [newRole, setNewRole] = useState("");
@@ -29,6 +30,10 @@ export default function AdminUsers() {
     }
     setShowModal(false);
   };
+
+  if (usuarioActual?.rol !== "admin") {
+    return <Navigate to={"/panel"}/>
+  }
 
   return (
     <div>

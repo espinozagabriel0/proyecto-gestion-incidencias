@@ -37,11 +37,8 @@ export default function RegisterCard() {
 // Funcion handler submit registro
   const handleSubmit = async (e) => {
     e.preventDefault();
-
   
     const result = await register(userEmail, password, nom)
-
-    console.log(result)
 
     if (result.success) {
       limpiarInputs()
@@ -54,20 +51,6 @@ export default function RegisterCard() {
     } else {
       console.error("Error en el registro:", result.error);
     }
-
-    // Crear nuevo usuario
-    // const nuevoUsuario = {
-    //   rol: "user",
-    //   nombre: nom,
-    //   id: usuarios.length + 1,
-    //   email: userEmail,
-    //   password: password
-    // };
-  
-    // // Añadir nuevo usuario al array
-    // setUsuarios((prevData) => [...prevData, nuevoUsuario])
-
-    // // mensaje de exito y settimeout para borrar 
   };
 
   const limpiarInputs = () => {

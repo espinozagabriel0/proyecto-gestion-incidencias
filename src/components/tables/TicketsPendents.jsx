@@ -93,7 +93,7 @@ export default function TicketsPendents({ tickets }) {
           </tr>
         </thead>
         <tbody>
-          {(usuarioActual?.rol == "user"
+          {(usuarioActual?.role == "user"
             ? tickets.filter(
                 (ticketsFilter) => ticketsFilter?.usuarioId == usuarioActual?.id
               )
@@ -108,7 +108,7 @@ export default function TicketsPendents({ tickets }) {
               <td>{ticket.descripcion}</td>
               <td>{ticket.alumno}</td>
               <td>
-                {usuarioActual?.rol == "admin" && (
+                {usuarioActual?.role == "admin" && (
                   <>
                     <button
                       onClick={() => handleResolve(ticket.id)}

@@ -18,8 +18,6 @@ export default function PanelComponent() {
     return <Navigate to={"/"} />;
   }
 
-  console.log(usuarioActual)
-
   return (
     <>
       <HeaderMenu />

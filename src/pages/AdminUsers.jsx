@@ -31,7 +31,7 @@ export default function AdminUsers() {
     setShowModal(false);
   };
 
-  if (usuarioActual?.rol !== "admin") {
+  if (usuarioActual?.role !== "admin") {
     return <Navigate to={"/panel"}/>
   }
 

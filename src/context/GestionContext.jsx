@@ -305,6 +305,8 @@ const GestionProvider = ({ children }) => {
         ];
   });
 
+  const [tickets, setTickets] = useState(null);
+
   useEffect(() => {
     localStorage.setItem("dades_tiquets", JSON.stringify(tiquetsTotal));
     localStorage.setItem("dades_usuaris", JSON.stringify(usuarios));
@@ -322,7 +324,9 @@ const GestionProvider = ({ children }) => {
         setUsuarioActual,
         register,
         login,
-        signOut
+        signOut,
+        tickets,
+        setTickets
       }}
     >
       {children}

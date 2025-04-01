@@ -356,7 +356,7 @@ export default function TicketsPendents({ tickets }) {
                     <label className="form-label text-decoration-underline">
                       Fecha:{" "}
                     </label>
-                    <p>{format(fecha, "dd/MM/yyyy HH:mm", {locale: es})}</p>
+                    <p>{fecha && format(fecha, "dd/MM/yyyy HH:mm", {locale: es})}</p>
                   </div>
                 </>
               )}

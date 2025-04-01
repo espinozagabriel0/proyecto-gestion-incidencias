@@ -191,7 +191,7 @@ export default function TicketsResolts({ tickets }) {
                     <label className="form-label text-decoration-underline">
                       Fecha Resuelto:{" "}
                     </label>
-                    <p>{format(fechaResuelto, "dd/MM/yyyy HH:mm", {locale: es})}</p>
+                    <p>{fechaResuelto && format(fechaResuelto, "dd/MM/yyyy HH:mm", {locale: es})}</p>
                   </div>
                 </>
               )}

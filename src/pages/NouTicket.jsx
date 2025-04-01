@@ -2,10 +2,10 @@
 
 import { useContext, useState } from "react";
 import { GestionContext } from "../context/GestionContext";
-import { crearTicket } from "../lib/utils";
+import { crearTicket, getTickets } from "../lib/utils";
 
 export default function NouTicket() {
-  const { setTiquetsTotal, usuarioActual } = useContext(GestionContext);
+  const { setTiquetsTotal, usuarioActual, setTickets } = useContext(GestionContext);
 
   const [aula, setAula] = useState("");
   const [grupo, setGrupo] = useState("");
@@ -66,6 +66,10 @@ export default function NouTicket() {
         const createdTicket = await crearTicket(newTicket);
         console.log("Ticket creado:", createdTicket);
         limpiarInputs();
+        
+        // Después de crear el ticket, se actualizan los tickets, para mantener sincronizado el state con supabase
+        const updatedTickets = await getTickets()
+        setTickets(updatedTickets)
 
       } catch (error) {
         console.error("Error al crear el ticket:", error);

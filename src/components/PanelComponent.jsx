@@ -9,8 +9,8 @@ import { getTickets } from "../lib/utils";
 
 export default function PanelComponent() {
   // obtener array dadesTiquets y filtrar por propiedad resuelto
-  const { tiquetsTotal, usuarioActual } = useContext(GestionContext);
-  const [tickets, setTickets] = useState(null)
+  const { tiquetsTotal, usuarioActual, tickets, setTickets } = useContext(GestionContext);
+  // const [tickets, setTickets] = useState(null)
   
   // const ticketsPendientes = tiquetsTotal.filter((ticket) => !ticket.resuelto);
 

@@ -1,21 +1,5 @@
 import { supabase } from "../supabase/supabase";
 
-// export async function getTicketsUsuario(userId) {
-//     try {
-//       const { data, error } = await supabase
-//         .from("Tickets")
-//         .select("*")
-//         .eq("usuarioId", userId);
-
-//       if (error) throw error;
-
-//       return data;
-//     } catch (error) {
-//       console.error("Error al obtener equipos:", error.message);
-//       return [];
-//     }
-//   }
-
 export async function getTickets() {
   try {
     const { data, error } = await supabase.from("Tickets").select("*");
@@ -24,7 +8,7 @@ export async function getTickets() {
 
     return data;
   } catch (error) {
-    console.error("Error al obtener equipos:", error.message);
+    console.error("Error al obtener los tickets:", error.message);
     return [];
   }
 }
@@ -104,13 +88,12 @@ export async function getCommentsUser(idTicket) {
 
     return data;
   } catch (error) {
-    console.error("Error al obtener equipos:", error.message);
+    console.error("Error al obtener comentarios:", error.message);
     return [];
   }
 }
 
-export async function crearComentario(data){
-
+export async function crearComentario(data) {
   try {
     const { data: insertedData, error } = await supabase
       .from("Comments")
@@ -126,6 +109,60 @@ export async function crearComentario(data){
     return insertedData;
   } catch (error) {
     console.error("Error al crear comentario:", error.message);
+    throw error;
+  }
+}
+export async function updateTicket(data, idTicket) {
+  try {
+    const { data: updatedData, error } = await supabase
+      .from("Tickets")
+      .update(data)
+      .eq("id", idTicket)
+      .select(); //devuelve los datos actualizados
+
+    if (error) {
+      console.error("Error de update:", error);
+      throw error;
+    }
+
+    console.log("Datos actualizados:", updatedData);
+    return updatedData; // Retorna los datos actualizados
+  } catch (error) {
+    console.error("Error al actualizar el ticket:", error.message);
+    throw error;
+  }
+}
+
+export async function getUsers() {
+  try {
+    const { data, error } = await supabase.from("Users").select("*");
+
+    if (error) throw error;
+
+    return data;
+  } catch (error) {
+    console.error("Error al obtener los usuarios:", error.message);
+    return [];
+  }
+}
+
+export async function updateUser(data, userId) {
+  try {
+    const { data: updatedData, error } = await supabase
+      .from("Users")
+      .update(data)
+      .eq("id", userId)
+      .select();
+
+    if (error) {
+      console.error("Error de update:", error);
+      throw error;
+    }
+
+    console.log("Datos actualizados:", updatedData);
+    return updatedData; 
+  } catch (error) {
+    console.error("Error al actualizar el usuario:", error.message);
     throw error;
   }
 }

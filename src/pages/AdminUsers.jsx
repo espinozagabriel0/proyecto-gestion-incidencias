@@ -1,7 +1,8 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import HeaderMenu from "../components/HeaderMenu";
 import { GestionContext } from "../context/GestionContext";
 import { Navigate } from "react-router-dom";
+import { getUsers, updateUser } from "../lib/utils";
 
 export default function AdminUsers() {
   const { usuarios, setUsuarios, usuarioActual } = useContext(GestionContext);
@@ -15,43 +16,76 @@ export default function AdminUsers() {
     setShowModal(true);
   };
 
-  const handleConfirmChange = () => {
+  // const handleConfirmChange = () => {
+  //   if (selectedUser && newRole) {
+  //     setUsuarios((prevUsuarios) =>
+  //       prevUsuarios.map((user) =>
+  //         user.id === selectedUser.id
+  //           ? {
+  //               ...user,
+  //               rol: newRole,
+  //             }
+  //           : user
+  //       )
+  //     );
+  //   }
+  //   setShowModal(false);
+  // };
+  const handleConfirmChange = async () => {
     if (selectedUser && newRole) {
-      setUsuarios((prevUsuarios) =>
-        prevUsuarios.map((user) =>
-          user.id === selectedUser.id
-            ? {
-                ...user,
-                rol: newRole,
-              }
-            : user
-        )
-      );
+      try {
+        const updatedData = {role: newRole};
+
+        const updatedTicket = await updateUser(updatedData, selectedUser?.id); 
+        console.log("usuario actualizado:", updatedTicket);
+  
+      } catch (error) {
+        console.error("Error al actualizar el rol del usuario:", error.message);
+      }
+    }else{
+      console.error('No se ha podido actualizar el usuario')
     }
     setShowModal(false);
   };
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const usersData = await getUsers();  
+        setUsuarios(usersData); 
+
+        console.log("Usuarios obtenidos:", usersData); 
+      } catch (error) {
+        console.error("Error al obtener los usuarios:", error.message);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  console.log(usuarios)
+
   if (usuarioActual?.role !== "admin") {
-    return <Navigate to={"/panel"}/>
+    return <Navigate to={"/panel"} />;
   }
 
   return (
     <div>
       <HeaderMenu />
       <main className="container mt-5 d-flex gap-3 justify-content-between flex-wrap">
-        {usuarios.map((usuario) => (
+        {usuarios && usuarios.map((usuario) => (
           <div
             key={usuario.id}
             className="border rounded-2 p-3 flex-grow-1 shadow"
           >
             <div className="d-flex justify-content-between align-items-center">
-              <h5>{usuario.nombre}</h5>
+              <h5>{usuario?.name}</h5>
             </div>
 
             <p>Rol:</p>
             <select
               className="form-select"
-              defaultValue={usuario?.rol}
+              defaultValue={usuario?.role}
               onChange={(e) => handleRoleChange(usuario, e.target.value)}
             >
               <option value="user">User</option>
@@ -63,7 +97,10 @@ export default function AdminUsers() {
 
         {showModal && (
           <>
-            <div className="modal-backdrop fade show" style={{display: "block"}}></div>
+            <div
+              className="modal-backdrop fade show"
+              style={{ display: "block" }}
+            ></div>
             <div
               className="modal fade show"
               style={{ display: "block" }}
@@ -72,7 +109,10 @@ export default function AdminUsers() {
               aria-labelledby="exampleModalCenterTitle"
               aria-hidden="true"
             >
-              <div className="modal-dialog modal-dialog-centered" role="document">
+              <div
+                className="modal-dialog modal-dialog-centered"
+                role="document"
+              >
                 <div className="modal-content">
                   <div className="modal-header">
                     <h5 className="modal-title" id="exampleModalLongTitle">
@@ -86,7 +126,9 @@ export default function AdminUsers() {
                     ></button>
                   </div>
                   <div className="modal-body">
-                    Se aplicarán estos cambios para el usuario {selectedUser?.nombre}: Rol {selectedUser?.rol} {'->'} {newRole}
+                    Se aplicarán estos cambios para el usuario{" "}
+                    {selectedUser?.nombre}: Rol {selectedUser?.role} {"->"}{" "}
+                    {newRole}
                   </div>
                   <div className="modal-footer">
                     <button

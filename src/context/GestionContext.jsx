@@ -262,50 +262,51 @@ const GestionProvider = ({ children }) => {
         ];
   });
 
-  const [usuarios, setUsuarios] = useState(() => {
-    const storedUsuarios = localStorage.getItem("dades_usuaris");
-    return storedUsuarios
-      ? JSON.parse(storedUsuarios)
-      : [
-          {
-            rol: "user",
-            nombre: "Ana García",
-            id: 1,
-            email: "ana.garcia@ejemplo.com",
-            password: "Us3r2025#",
-          },
-          {
-            rol: "admin",
-            nombre: "Gabriel Bascope",
-            id: 2,
-            email: "gabriel.bascope@ejemplo.com",
-            password: "Adm1n2025!",
-          },
-          {
-            rol: "user",
-            nombre: "María López",
-            id: 3,
-            email: "maria.lopez@ejemplo.com",
-            password: "Ed1tor2025$",
-          },
-          {
-            rol: "user",
-            nombre: "Juan Martínez",
-            id: 4,
-            email: "juan.martinez@ejemplo.com",
-            password: "Us3r2025%",
-          },
-          {
-            rol: "profesor",
-            nombre: "Laura Sánchez",
-            id: 5,
-            email: "laura.sanchez@ejemplo.com",
-            password: "M0d2025&",
-          },
-        ];
-  });
+  // const [usuarios, setUsuarios] = useState(() => {
+  //   const storedUsuarios = localStorage.getItem("dades_usuaris");
+  //   return storedUsuarios
+  //     ? JSON.parse(storedUsuarios)
+  //     : [
+  //         {
+  //           rol: "user",
+  //           nombre: "Ana García",
+  //           id: 1,
+  //           email: "ana.garcia@ejemplo.com",
+  //           password: "Us3r2025#",
+  //         },
+  //         {
+  //           rol: "admin",
+  //           nombre: "Gabriel Bascope",
+  //           id: 2,
+  //           email: "gabriel.bascope@ejemplo.com",
+  //           password: "Adm1n2025!",
+  //         },
+  //         {
+  //           rol: "user",
+  //           nombre: "María López",
+  //           id: 3,
+  //           email: "maria.lopez@ejemplo.com",
+  //           password: "Ed1tor2025$",
+  //         },
+  //         {
+  //           rol: "user",
+  //           nombre: "Juan Martínez",
+  //           id: 4,
+  //           email: "juan.martinez@ejemplo.com",
+  //           password: "Us3r2025%",
+  //         },
+  //         {
+  //           rol: "profesor",
+  //           nombre: "Laura Sánchez",
+  //           id: 5,
+  //           email: "laura.sanchez@ejemplo.com",
+  //           password: "M0d2025&",
+  //         },
+  //       ];
+  // });
 
   const [tickets, setTickets] = useState(null);
+  const [usuarios, setUsuarios] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("dades_tiquets", JSON.stringify(tiquetsTotal));

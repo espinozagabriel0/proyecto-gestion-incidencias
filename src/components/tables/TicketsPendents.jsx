@@ -3,7 +3,7 @@ import { GestionContext } from "../../context/GestionContext";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { resolverTicket, getTickets, eliminarTicket } from "../../lib/utils";
+import { resolverTicket, getTickets, eliminarTicket, updateTicket } from "../../lib/utils";
 
 export default function TicketsPendents({ tickets }) {
   const { setTiquetsTotal, usuarioActual, setTickets } = useContext(GestionContext);
@@ -70,26 +70,52 @@ export default function TicketsPendents({ tickets }) {
     }
   };
 
-  const handleUpdateTicket = (e) => {
-    e.preventDefault();
+  // const handleUpdateTicket = (e) => {
+  //   e.preventDefault();
 
+  //   if (aula && grupo && ordenador && descripcion && alumno) {
+  //     setTiquetsTotal((prevTickets) =>
+  //       prevTickets.map((ticket) =>
+  //         ticket.id == selectedTicket.id
+  //           ? {
+  //               ...ticket,
+  //               aula,
+  //               grupo,
+  //               ordenador,
+  //               descripcion,
+  //               alumno,
+  //             }
+  //           : ticket
+  //       )
+  //     );
+  //   }
+  // };
+  const handleUpdateTicket = async (e) => {
+    e.preventDefault();
+  
     if (aula && grupo && ordenador && descripcion && alumno) {
-      setTiquetsTotal((prevTickets) =>
-        prevTickets.map((ticket) =>
-          ticket.id == selectedTicket.id
-            ? {
-                ...ticket,
-                aula,
-                grupo,
-                ordenador,
-                descripcion,
-                alumno,
-              }
-            : ticket
-        )
-      );
+      
+      try {
+        const updatedData = {
+          aula,
+          grupo,
+          ordenador,
+          descripcion,
+          alumno,
+        };
+        console.log(updatedData, selectedTicket?.id)
+
+        const updatedTicket = await updateTicket(updatedData, selectedTicket?.id); 
+        console.log("Ticket actualizado:", updatedTicket);
+  
+      } catch (error) {
+        console.error("Error al actualizar el ticket:", error.message);
+      }
+    } else {
+      console.error("Error: Todos los campos deben estar completos.");
     }
   };
+  
 
   useEffect(() => {
     if (selectedTicket) {

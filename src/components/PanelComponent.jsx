@@ -43,7 +43,7 @@ export default function PanelComponent() {
   return (
     <>
       <HeaderMenu />
-      <main className="container mt-5">
+      <main style={{maxWidth: "90rem"}} className="mt-5 mx-auto">
         <div className="d-flex align-items-center justify-content-between">
           <h1>Administración de incidencias</h1>
           {["admin", "user"].includes(usuarioActual?.role) && <NouTicket />}

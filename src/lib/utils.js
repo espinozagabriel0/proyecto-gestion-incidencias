@@ -85,10 +85,47 @@ export async function eliminarTicket(idTicket) {
       console.error("Error al eliminar el ticket:", error);
       throw error;
     }
-    
+
     return data;
   } catch (error) {
     console.error("Error al resolver el ticket:", error.message);
+    throw error;
+  }
+}
+
+export async function getCommentsUser(idTicket) {
+  try {
+    const { data, error } = await supabase
+      .from("Comments")
+      .select("*")
+      .eq("ticketId", idTicket);
+
+    if (error) throw error;
+
+    return data;
+  } catch (error) {
+    console.error("Error al obtener equipos:", error.message);
+    return [];
+  }
+}
+
+export async function crearComentario(data){
+
+  try {
+    const { data: insertedData, error } = await supabase
+      .from("Comments")
+      .insert(data)
+      .select();
+
+    if (error) {
+      console.error("Error de inserción:", error);
+      throw error;
+    }
+
+    console.log("Datos insertados:", insertedData);
+    return insertedData;
+  } catch (error) {
+    console.error("Error al crear comentario:", error.message);
     throw error;
   }
 }

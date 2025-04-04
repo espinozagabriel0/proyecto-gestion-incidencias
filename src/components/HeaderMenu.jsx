@@ -41,7 +41,15 @@ export default function HeaderMenu() {
           </div>
           <div className="d-flex align-items-center">
             <div className="user-info me-2">
-              <p className="mb-0 fw-bold">{usuarioActual?.name}</p>
+              {usuarioActual && (
+                <p className="mb-0 fw-bold">
+                  {usuarioActual?.name}
+                  <span style={{ fontSize: ".85rem" }} className="text-secondary">
+                    {" "}
+                    ({usuarioActual?.role})
+                  </span>
+                </p>
+              )}
               <span className="text-muted">
                 {usuarioActual?.email || "Inicia sesión"}
               </span>

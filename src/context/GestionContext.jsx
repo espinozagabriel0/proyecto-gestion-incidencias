@@ -107,7 +107,7 @@ const GestionProvider = ({ children }) => {
       await supabase.auth.admin.deleteUser(authData.user.id);
       return { success: false, error: userError.message };
     }
-
+    await supabase.auth.signOut(); // cerrar sesión después de registrar exitosamente, para que el usuario inicie sesión con su email y password
     return { success: true, data: userData };
   };
 

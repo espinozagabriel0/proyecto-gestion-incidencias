@@ -3,10 +3,17 @@ import { GestionContext } from "../../context/GestionContext";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { resolverTicket, getTickets, eliminarTicket, updateTicket } from "../../lib/utils";
+import {
+  resolverTicket,
+  getTickets,
+  eliminarTicket,
+  updateTicket,
+} from "../../lib/utils";
+import { supabase } from "../../supabase/supabase";
 
 export default function TicketsPendents({ tickets }) {
-  const { setTiquetsTotal, usuarioActual, setTickets } = useContext(GestionContext);
+  const { setTiquetsTotal, usuarioActual, setTickets } =
+    useContext(GestionContext);
   const [selectedTicket, setSelectedTicket] = useState(null);
 
   const [aula, setAula] = useState(selectedTicket ? selectedTicket?.aula : "");
@@ -27,74 +34,33 @@ export default function TicketsPendents({ tickets }) {
     selectedTicket ? selectedTicket?.fecha : ""
   );
 
-  // crea un nuevo array con tickets y si el id coincide, actualiza la propiedad resuelto, sino, se devuelve el ticket sin actualizar
-  // const handleResolve = (id) => {
-  //   const date = new Date();
-  //   const formattedDate = date.toLocaleDateString();
+  const fetchTickets = async () => {
+    const updatedTickets = await getTickets();
+    setTickets(updatedTickets);
+  };
 
-  //   setTiquetsTotal((prevTickets) =>
-  //     prevTickets.map((ticket) =>
-  //       ticket.id == id
-  //         ? { ...ticket, resuelto: true, fecha_resuelto: formattedDate }
-  //         : ticket
-  //     )
-  //   );
-  // };
   const handleResolve = async (id) => {
     try {
       const ticketResuelto = await resolverTicket(id);
       console.log("Ticket resuelto:", ticketResuelto);
-
-      const updatedTickets = await getTickets();
-      setTickets(updatedTickets);
     } catch (error) {
       console.error("Error al resolver el ticket:", error);
     }
   };
 
-  // const handleRemove = (id) => {
-  //   // sobreescribe el array en localStorage sin el ticket seleccionado
-  //   setTiquetsTotal((prevTickets) =>
-  //     prevTickets.filter((ticket) => ticket.id !== id)
-  //   );
-  // };
   const handleRemove = async (id) => {
     try {
       const ticketEliminado = await eliminarTicket(id);
       console.log("Ticket eliminado:", ticketEliminado);
-
-      const updatedTickets = await getTickets();
-      setTickets(updatedTickets)
     } catch (error) {
       console.error("Error al eliminar el ticket:", error);
     }
   };
 
-  // const handleUpdateTicket = (e) => {
-  //   e.preventDefault();
-
-  //   if (aula && grupo && ordenador && descripcion && alumno) {
-  //     setTiquetsTotal((prevTickets) =>
-  //       prevTickets.map((ticket) =>
-  //         ticket.id == selectedTicket.id
-  //           ? {
-  //               ...ticket,
-  //               aula,
-  //               grupo,
-  //               ordenador,
-  //               descripcion,
-  //               alumno,
-  //             }
-  //           : ticket
-  //       )
-  //     );
-  //   }
-  // };
   const handleUpdateTicket = async (e) => {
     e.preventDefault();
-  
+
     if (aula && grupo && ordenador && descripcion && alumno) {
-      
       try {
         const updatedData = {
           aula,
@@ -103,11 +69,13 @@ export default function TicketsPendents({ tickets }) {
           descripcion,
           alumno,
         };
-        console.log(updatedData, selectedTicket?.id)
+        console.log(updatedData, selectedTicket?.id);
 
-        const updatedTicket = await updateTicket(updatedData, selectedTicket?.id); 
+        const updatedTicket = await updateTicket(
+          updatedData,
+          selectedTicket?.id
+        );
         console.log("Ticket actualizado:", updatedTicket);
-  
       } catch (error) {
         console.error("Error al actualizar el ticket:", error.message);
       }
@@ -115,7 +83,6 @@ export default function TicketsPendents({ tickets }) {
       console.error("Error: Todos los campos deben estar completos.");
     }
   };
-  
 
   useEffect(() => {
     if (selectedTicket) {
@@ -127,6 +94,27 @@ export default function TicketsPendents({ tickets }) {
       setFecha(selectedTicket?.created_at);
     }
   }, [selectedTicket]);
+
+  useEffect(() => {
+    const changes = supabase
+      .channel("schema-db-changes")
+      .on(
+        "postgres_changes",
+        {
+          schema: "public",
+          event: "*",
+          table: "Tickets",
+        },
+        (payload) => {
+          fetchTickets();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      changes.unsubscribe();
+    };
+  }, []);
 
   return (
     <>

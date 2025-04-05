@@ -3,6 +3,7 @@ import HeaderMenu from "../components/HeaderMenu";
 import { GestionContext } from "../context/GestionContext";
 import { Navigate } from "react-router-dom";
 import { getUsers, updateUser } from "../lib/utils";
+import { supabase } from "../supabase/supabase";
 
 export default function AdminUsers() {
   const { usuarios, setUsuarios, usuarioActual } = useContext(GestionContext);
@@ -16,21 +17,6 @@ export default function AdminUsers() {
     setShowModal(true);
   };
 
-  // const handleConfirmChange = () => {
-  //   if (selectedUser && newRole) {
-  //     setUsuarios((prevUsuarios) =>
-  //       prevUsuarios.map((user) =>
-  //         user.id === selectedUser.id
-  //           ? {
-  //               ...user,
-  //               rol: newRole,
-  //             }
-  //           : user
-  //       )
-  //     );
-  //   }
-  //   setShowModal(false);
-  // };
   const handleConfirmChange = async () => {
     if (selectedUser && newRole) {
       try {
@@ -48,22 +34,42 @@ export default function AdminUsers() {
     setShowModal(false);
   };
 
+  const fetchUsers = async () => {
+    try {
+      const usersData = await getUsers();  
+      setUsuarios(usersData); 
+
+      console.log("Usuarios obtenidos:", usersData); 
+    } catch (error) {
+      console.error("Error al obtener los usuarios:", error.message);
+    }
+  };
+
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const usersData = await getUsers();  
-        setUsuarios(usersData); 
-
-        console.log("Usuarios obtenidos:", usersData); 
-      } catch (error) {
-        console.error("Error al obtener los usuarios:", error.message);
-      }
-    };
-
     fetchUsers();
   }, []);
 
-  console.log(usuarios)
+    useEffect(() => {
+      const changes = supabase
+        .channel("schema-db-changes")
+        .on(
+          "postgres_changes",
+          {
+            schema: "public",
+            event: "*",
+            table: "Users",
+          },
+          (payload) => {
+            fetchUsers()
+          }
+        )
+        .subscribe();
+  
+      return () => {
+        changes.unsubscribe();
+      };
+    }, []);
+
 
   if (usuarioActual?.role !== "admin") {
     return <Navigate to={"/panel"} />;

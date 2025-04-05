@@ -17,7 +17,7 @@ const GestionProvider = ({ children }) => {
   const clearUserFromLocalStorage = () => {
     localStorage.removeItem("usuari_actual");
     setUsuarioActual(null);
-  }
+  };
 
   useEffect(() => {
     const getUserData = async (session) => {
@@ -111,7 +111,6 @@ const GestionProvider = ({ children }) => {
     return { success: true, data: userData };
   };
 
-
   const signOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
@@ -127,7 +126,6 @@ const GestionProvider = ({ children }) => {
       setUsuarioActual(null);
     }
   };
-
 
   const [tiquetsTotal, setTiquetsTotal] = useState(() => {
     const storedTiquets = localStorage.getItem("dades_tiquets");
@@ -327,7 +325,7 @@ const GestionProvider = ({ children }) => {
         login,
         signOut,
         tickets,
-        setTickets
+        setTickets,
       }}
     >
       {children}

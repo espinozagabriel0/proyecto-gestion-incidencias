@@ -4,9 +4,11 @@ import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { eliminarTicket, getTickets } from "../../lib/utils";
+import { supabase } from "../../supabase/supabase";
 
 export default function TicketsResolts({ tickets }) {
-  const { setTiquetsTotal, usuarioActual, setTickets} = useContext(GestionContext);
+  const { setTiquetsTotal, usuarioActual, setTickets } =
+    useContext(GestionContext);
   const [selectedTicket, setSelectedTicket] = useState(null);
 
   const [aula, setAula] = useState(selectedTicket ? selectedTicket?.aula : "");
@@ -29,19 +31,14 @@ export default function TicketsResolts({ tickets }) {
     selectedTicket ? selectedTicket?.date_solved : ""
   );
 
-  // const handleRemove = (id) => {
-  //   // sobreescribe el array en localStorage sin el ticket seleccionado
-  //   setTiquetsTotal((prevTickets) =>
-  //     prevTickets.filter((ticket) => ticket.id !== id)
-  //   );
-  // };
+  const fetchTickets = async () => {
+    const updatedTickets = await getTickets();
+    setTickets(updatedTickets);
+  };
   const handleRemove = async (id) => {
     try {
       const ticketEliminado = await eliminarTicket(id);
       console.log("Ticket eliminado:", ticketEliminado);
-
-      const updatedTickets = await getTickets();
-      setTickets(updatedTickets);
     } catch (error) {
       console.error("Error al eliminar el ticket:", error);
     }
@@ -57,6 +54,27 @@ export default function TicketsResolts({ tickets }) {
       setFechaResuelto(selectedTicket.date_solved);
     }
   }, [selectedTicket]);
+
+  useEffect(() => {
+    const changes = supabase
+      .channel("schema-db-changes")
+      .on(
+        "postgres_changes",
+        {
+          schema: "public",
+          event: "*",
+          table: "Tickets",
+        },
+        (payload) => {
+          fetchTickets();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      changes.unsubscribe();
+    };
+  }, []);
 
   return (
     <>

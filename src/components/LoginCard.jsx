@@ -7,24 +7,9 @@ export default function LoginCard() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { usuarios, setUsuarioActual, login } = useContext(GestionContext);
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
-
-  // simular inicio de sesion usando dades_usuaris localStorage
-  // const handleLogin = (e) => {
-  //   e.preventDefault()
-
-  //   const userExists = usuarios.find((user) => user.email == email && user.password == password)
-  //   if (userExists) {
-  //     // si existe, guardar en localStorage usuario actual y redirigir a panel
-  //     // localStorage.setItem('usuari_actual', JSON.stringify(userExists))
-  //     setUsuarioActual(userExists)
-
-  //     navigate('/panel')
-  //   }
-
-  //   limpiarInputs()
-  // }
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -33,12 +18,12 @@ export default function LoginCard() {
     const result = await login(email, password);
 
     if (result.error) {
-      console.error("Error de inicio de sesión:", result.error);
+      // console.error("Error de inicio de sesión:", result.error);
+      setError("Error: " + result.error);
     } else {
-      // Inicio de sesión exitoso
       limpiarInputs();
-      setUsuarioActual(result?.profile); // Guardar datos del usuario en el estado global
-      navigate("/panel"); // Redirigir al panel
+      setUsuarioActual(result?.profile);
+      navigate("/panel");
     }
   };
 
@@ -59,6 +44,7 @@ export default function LoginCard() {
             className="form p-4 border shadow bordered mt-5 mx-auto"
             style={{ width: "400px" }}
           >
+            {error && <p className="text-danger text-center">{error}</p>}
             <label htmlFor="email" className="mt-2 form-label">
               User:
             </label>

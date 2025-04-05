@@ -1,11 +1,13 @@
 // import HeaderMenu from "../components/HeaderMenu";
 
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { GestionContext } from "../context/GestionContext";
 import { crearTicket, getTickets } from "../lib/utils";
+import { supabase } from "../supabase/supabase";
 
 export default function NouTicket() {
-  const { setTiquetsTotal, usuarioActual, setTickets } = useContext(GestionContext);
+  const { setTiquetsTotal, usuarioActual, setTickets } =
+    useContext(GestionContext);
 
   const [aula, setAula] = useState("");
   const [grupo, setGrupo] = useState("");
@@ -13,43 +15,15 @@ export default function NouTicket() {
   const [descripcion, setDescripcion] = useState("");
   const [alumno, setAlumno] = useState("");
 
-  // const handleCrearTicket = (e) => {
-  //   e.preventDefault();
+  const fetchTickets = async () => {
+    const updatedTickets = await getTickets();
+    setTickets(updatedTickets);
+  };
 
-  //   console.log(aula);
-
-  //   if (aula && grupo && ordenador && descripcion && alumno) {
-  //     const date = new Date();
-  //     const formattedDate = date.toLocaleDateString();
-
-  //     setTiquetsTotal((prevTiquets) => [
-  //       ...prevTiquets,
-  //       {
-  //         id: prevTiquets.length + 1,
-  //         fecha: formattedDate,
-  //         // fecha_resuelto: "13/02/2025", --> por defecto no está esta propiedad, se cambia en ticketsPendents
-  //         aula: aula,
-  //         grupo: grupo,
-  //         ordenador: ordenador,
-  //         descripcion: descripcion,
-  //         alumno: alumno,
-  //         comments: [],
-  //         resuelto: false,
-  //         usuarioId: usuarioActual?.id,
-  //       },
-  //     ]);
-
-  //     limpiarInputs();
-  //   }
-  // };
-  const handleCrearTicket = async(e) => {
+  const handleCrearTicket = async (e) => {
     e.preventDefault();
-
-    console.log(usuarioActual)
     if (!usuarioActual?.id) return;
 
-
-    console.log('DATOS: ', aula, grupo, ordenador, descripcion, alumno)
     if (aula && grupo && ordenador && descripcion) {
       const newTicket = {
         aula: aula,
@@ -57,25 +31,39 @@ export default function NouTicket() {
         ordenador: ordenador,
         descripcion: descripcion,
         alumno: usuarioActual?.role == "user" ? usuarioActual?.name : alumno,
-        usuarioId: usuarioActual?.id
-      }
-
-      console.log(newTicket)
+        usuarioId: usuarioActual?.id,
+      };
 
       try {
         const createdTicket = await crearTicket(newTicket);
         console.log("Ticket creado:", createdTicket);
         limpiarInputs();
-        
-        // Después de crear el ticket, se actualizan los tickets, para mantener sincronizado el state con supabase
-        const updatedTickets = await getTickets()
-        setTickets(updatedTickets)
-
       } catch (error) {
         console.error("Error al crear el ticket:", error);
       }
     }
   };
+
+  useEffect(() => {
+    const changes = supabase
+      .channel("schema-db-changes")
+      .on(
+        "postgres_changes",
+        {
+          schema: "public",
+          event: "*",
+          table: "Tickets",
+        },
+        (payload) => {
+          fetchTickets();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      changes.unsubscribe();
+    };
+  }, []);
 
   const limpiarInputs = () => {
     setAula("");

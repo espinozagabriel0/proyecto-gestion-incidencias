@@ -3,68 +3,76 @@ import HeaderMenu from "./HeaderMenu";
 import Comment from "./Comment";
 import { useContext, useEffect, useState } from "react";
 import { GestionContext } from "../context/GestionContext";
+import { crearComentario, getCommentsUser } from "../lib/utils";
+import { es } from "date-fns/locale";
+import { format } from "date-fns";
+import { supabase } from "../supabase/supabase";
 
 export default function Comments({ id }) {
-  
-  const { tiquetsTotal, setTiquetsTotal, usuarioActual} = useContext(GestionContext);
+  const { tiquetsTotal, setTiquetsTotal, usuarioActual } =
+    useContext(GestionContext);
 
-  // Al cargar componente, cargar comentarios de este ticket
-  const [comentarios, setComentarios] = useState(tiquetsTotal.filter((tiquet) => tiquet.id == id)[0].comments || []);
-
-  // const usuarioActual = JSON.parse(
-  //   localStorage.getItem("usuari_actual")
-  // )?.nombre;
-
+  const [comentarios, setComentarios] = useState(null);
 
   const [commentBody, setCommentBody] = useState("");
-  // const [commentDate, setCommentDate] = useState(new Date());
+
+  const fetchComments = async () => {
+    const data = await getCommentsUser(id);
+    setComentarios(data);
+  };
 
   useEffect(() => {
-    console.log(comentarios);
-  }, []);
+    const getComments = async () => {
+      try {
+        fetchComments();
+      } catch (error) {
+        console.error("Error al obtener comentarios:", error.message);
+      }
+    };
 
-  const handleAddComment = (e) => {
+    const changes = supabase
+      .channel("schema-db-changes")
+      .on(
+        "postgres_changes",
+        {
+          schema: "public",
+          event: "*",
+          table: "Comments",
+        },
+        (payload) => {
+          fetchComments();
+        }
+      )
+      .subscribe();
+
+    getComments();
+    return () => {
+      changes.unsubscribe();
+    };
+  }, [id]);
+
+  const handleAddComment = async (e) => {
     // Comprobar que estan todos los campos y de forma correcta, y guardar este comentario al array 'comments' del ticket seleccionado en localstorage
     e.preventDefault();
+    if (commentBody.length == 0) return;
+    try {
+      const data = {
+        comment: commentBody,
+        ticketId: id,
+        userId: usuarioActual?.id,
+        user_name: usuarioActual?.name,
+      };
+      const createdComment = await crearComentario(data);
 
-    if (usuarioActual) {
-      if (commentBody.length > 0) {
-        const date = new Date()
-        const formattedDate = date.toLocaleDateString()
-
-        const modifiedComments = [
-          ...comentarios,
-          {
-            //
-            id: comentarios.length++,
-            Author: usuarioActual?.nombre,
-            Date: formattedDate,
-            CommentBody: commentBody,
-          },
-        ];
-        // Se cambia el state de comentarios (local) y el tiquetsTotal(global) para sincronizarlo
-        setComentarios(modifiedComments);
-        setTiquetsTotal((prevTickets) =>
-          prevTickets.map((ticket) =>
-            ticket.id == id
-              ? {
-                  ...ticket,
-                  comments: modifiedComments,
-                }
-              : ticket
-          )
-        );
-
-        setCommentBody("")
-        // setCommentDate(new Date())
-      }
-    } else {
-      console.error("Inicia sesión para poder añadir comentarios.");
+      setCommentBody("");
+      console.log("Comentario creado:", createdComment);
+    } catch (error) {
+      console.error("Error al añadir comentario:", error.message);
     }
   };
 
   if (!usuarioActual) {
-    return <Navigate to={"/"}/>
+    return <Navigate to={"/"} />;
   }
 
   return (
@@ -114,17 +122,24 @@ export default function Comments({ id }) {
 
           {/* Comentarios, que se cargaran del array comentario en localstorage que tenga el id del ticket seleccionado*/}
           <div className="mt-4">
-            {comentarios.length > 0 ? (
+            {comentarios && comentarios.length > 0 ? (
               comentarios.map((comentario) => (
                 <Comment
-                  key={comentario.id}
-                  author={comentario.Author}
-                  date={comentario.Date}
-                  body={comentario.CommentBody}
+                  key={comentario?.id}
+                  author={comentario?.user_name}
+                  date={
+                    comentario?.created_at &&
+                    format(comentario?.created_at, "dd/MM/yyyy HH:mm:ss", {
+                      locale: es,
+                    })
+                  }
+                  body={comentario?.comment}
                 />
               ))
             ) : (
-              <p className="text-center">Todavía no hay comentarios para este ticket.</p>
+              <p className="text-center">
+                Todavía no hay comentarios para este ticket.
+              </p>
             )}
           </div>
         </div>

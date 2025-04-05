@@ -1,9 +1,19 @@
 import { useContext, useEffect, useState } from "react";
 import { GestionContext } from "../../context/GestionContext";
 import { Link } from "react-router-dom";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import {
+  resolverTicket,
+  getTickets,
+  eliminarTicket,
+  updateTicket,
+} from "../../lib/utils";
+import { supabase } from "../../supabase/supabase";
 
 export default function TicketsPendents({ tickets }) {
-  const { setTiquetsTotal, usuarioActual } = useContext(GestionContext);
+  const { setTiquetsTotal, usuarioActual, setTickets } =
+    useContext(GestionContext);
   const [selectedTicket, setSelectedTicket] = useState(null);
 
   const [aula, setAula] = useState(selectedTicket ? selectedTicket?.aula : "");
@@ -24,45 +34,53 @@ export default function TicketsPendents({ tickets }) {
     selectedTicket ? selectedTicket?.fecha : ""
   );
 
-  // crea un nuevo array con tickets y si el id coincide, actualiza la propiedad resuelto, sino, se devuelve el ticket sin actualizar
-  const handleResolve = (id) => {
-    const date = new Date();
-    const formattedDate = date.toLocaleDateString();
-
-    setTiquetsTotal((prevTickets) =>
-      prevTickets.map((ticket) =>
-        ticket.id == id
-          ? { ...ticket, resuelto: true, fecha_resuelto: formattedDate }
-          : ticket
-      )
-    );
+  const fetchTickets = async () => {
+    const updatedTickets = await getTickets();
+    setTickets(updatedTickets);
   };
 
-  const handleRemove = (id) => {
-    // sobreescribe el array en localStorage sin el ticket seleccionado
-    setTiquetsTotal((prevTickets) =>
-      prevTickets.filter((ticket) => ticket.id !== id)
-    );
+  const handleResolve = async (id) => {
+    try {
+      const ticketResuelto = await resolverTicket(id);
+      console.log("Ticket resuelto:", ticketResuelto);
+    } catch (error) {
+      console.error("Error al resolver el ticket:", error);
+    }
   };
 
-  const handleUpdateTicket = (e) => {
+  const handleRemove = async (id) => {
+    try {
+      const ticketEliminado = await eliminarTicket(id);
+      console.log("Ticket eliminado:", ticketEliminado);
+    } catch (error) {
+      console.error("Error al eliminar el ticket:", error);
+    }
+  };
+
+  const handleUpdateTicket = async (e) => {
     e.preventDefault();
 
     if (aula && grupo && ordenador && descripcion && alumno) {
-      setTiquetsTotal((prevTickets) =>
-        prevTickets.map((ticket) =>
-          ticket.id == selectedTicket.id
-            ? {
-                ...ticket,
-                aula,
-                grupo,
-                ordenador,
-                descripcion,
-                alumno,
-              }
-            : ticket
-        )
-      );
+      try {
+        const updatedData = {
+          aula,
+          grupo,
+          ordenador,
+          descripcion,
+          alumno,
+        };
+        console.log(updatedData, selectedTicket?.id);
+
+        const updatedTicket = await updateTicket(
+          updatedData,
+          selectedTicket?.id
+        );
+        console.log("Ticket actualizado:", updatedTicket);
+      } catch (error) {
+        console.error("Error al actualizar el ticket:", error.message);
+      }
+    } else {
+      console.error("Error: Todos los campos deben estar completos.");
     }
   };
 
@@ -73,9 +91,30 @@ export default function TicketsPendents({ tickets }) {
       setOrdenador(selectedTicket.ordenador);
       setDescripcion(selectedTicket.descripcion);
       setAlumno(selectedTicket.alumno);
-      setFecha(selectedTicket?.fecha);
+      setFecha(selectedTicket?.created_at);
     }
   }, [selectedTicket]);
+
+  useEffect(() => {
+    const changes = supabase
+      .channel("schema-db-changes")
+      .on(
+        "postgres_changes",
+        {
+          schema: "public",
+          event: "*",
+          table: "Tickets",
+        },
+        (payload) => {
+          fetchTickets();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      changes.unsubscribe();
+    };
+  }, []);
 
   return (
     <>
@@ -93,67 +132,80 @@ export default function TicketsPendents({ tickets }) {
           </tr>
         </thead>
         <tbody>
-          {(usuarioActual?.rol == "user"
-            ? tickets.filter(
-                (ticketsFilter) => ticketsFilter?.usuarioId == usuarioActual?.id
-              )
-            : tickets
-          ).map((ticket) => (
-            <tr key={ticket.id}>
-              <td>{ticket.id}</td>
-              <td>{ticket.fecha}</td>
-              <td>{ticket.aula}</td>
-              <td>{ticket.grupo}</td>
-              <td>{ticket.ordenador}</td>
-              <td>{ticket.descripcion}</td>
-              <td>{ticket.alumno}</td>
-              <td>
-                {usuarioActual?.rol == "admin" && (
-                  <>
-                    <button
-                      onClick={() => handleResolve(ticket.id)}
-                      className="btn btn-success me-1"
-                      title="Resolver ticket"
-                    >
-                      Resolver
-                    </button>
-                    <button
-                      className="btn btn-warning me-1"
-                      title="Editar Ticket"
-                      data-bs-toggle="modal"
-                      data-bs-target="#exampleModal"
-                      onClick={() => setSelectedTicket(ticket)}
-                    >
-                      <i className="bi bi-pencil"></i>
-                    </button>
-                    <button
-                      onClick={() => handleRemove(ticket.id)}
-                      className="btn btn-danger me-1"
-                      title="Eliminar ticket"
-                    >
-                      <i className="bi bi-trash3"></i>
-                    </button>
-                  </>
-                )}
-                <button className="btn btn-info me-1" title="Ver comentarios">
-                  <Link to={`/comments/${ticket.id}`}>
-                    <i className="bi bi-chat-left-text"></i>
-                  </Link>
-                </button>
+          {tickets && tickets.length > 0 ? (
+            (usuarioActual?.role == "user"
+              ? tickets.filter(
+                  (ticketsFilter) =>
+                    ticketsFilter?.usuarioId == usuarioActual?.id
+                )
+              : tickets
+            ).map((ticket) => (
+              <tr key={ticket.id}>
+                <td>{ticket?.id}</td>
+                <td>
+                  {format(ticket?.created_at, "dd/MM/yyyy HH:mm", {
+                    locale: es,
+                  })}
+                </td>
+                <td>{ticket?.aula}</td>
+                <td>{ticket?.grupo}</td>
+                <td>{ticket?.ordenador}</td>
+                <td>{ticket?.descripcion}</td>
+                <td>{ticket?.alumno}</td>
+                <td>
+                  {usuarioActual?.role == "admin" && (
+                    <>
+                      <button
+                        onClick={() => handleResolve(ticket.id)}
+                        className="btn btn-success me-1"
+                        title="Resolver ticket"
+                      >
+                        Resolver
+                      </button>
+                      <button
+                        className="btn btn-warning me-1"
+                        title="Editar Ticket"
+                        data-bs-toggle="modal"
+                        data-bs-target="#exampleModal"
+                        onClick={() => setSelectedTicket(ticket)}
+                      >
+                        <i className="bi bi-pencil"></i>
+                      </button>
+                      <button
+                        onClick={() => handleRemove(ticket.id)}
+                        className="btn btn-danger me-1"
+                        title="Eliminar ticket"
+                      >
+                        <i className="bi bi-trash3"></i>
+                      </button>
+                    </>
+                  )}
+                  <button className="btn btn-info me-1" title="Ver comentarios">
+                    <Link to={`/comments/${ticket.id}`}>
+                      <i className="bi bi-chat-left-text"></i>
+                    </Link>
+                  </button>
 
-                {/* Boton para ver info del ticket */}
-                <button
-                  onClick={() => setSelectedTicket(ticket)}
-                  className="btn btn-info"
-                  data-bs-toggle="modal"
-                  data-bs-target="#modalInfo"
-                  title="Más Info"
-                >
-                  <i className="bi bi-info"></i>
-                </button>
+                  {/* Boton para ver info del ticket */}
+                  <button
+                    onClick={() => setSelectedTicket(ticket)}
+                    className="btn btn-info"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalInfo"
+                    title="Más Info"
+                  >
+                    <i className="bi bi-info"></i>
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="8" className="text-center">
+                No hay tickets pendientes en este momento.
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
       {/* Modal Para Editar*/}
@@ -345,7 +397,10 @@ export default function TicketsPendents({ tickets }) {
                     <label className="form-label text-decoration-underline">
                       Fecha:{" "}
                     </label>
-                    <p>{fecha}</p>
+                    <p>
+                      {fecha &&
+                        format(fecha, "dd/MM/yyyy HH:mm", { locale: es })}
+                    </p>
                   </div>
                 </>
               )}

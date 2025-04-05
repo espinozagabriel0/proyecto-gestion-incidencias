@@ -10,11 +10,6 @@ import { getTickets } from "../lib/utils";
 export default function PanelComponent() {
   // obtener array dadesTiquets y filtrar por propiedad resuelto
   const { tiquetsTotal, usuarioActual, tickets, setTickets } = useContext(GestionContext);
-  // const [tickets, setTickets] = useState(null)
-  
-  // const ticketsPendientes = tiquetsTotal.filter((ticket) => !ticket.resuelto);
-
-  // const ticketsResueltos = tiquetsTotal.filter((ticket) => ticket.resuelto);
 
   useEffect(() => {
     const fetchTiquets = async () => {
